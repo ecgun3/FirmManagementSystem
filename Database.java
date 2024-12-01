@@ -74,8 +74,8 @@ public class Database{
                 employee.setSurname(rs.getString("surname"));
                 employee.setPhone(rs.getString("phone_no"));
                 employee.setEmail(rs.getString("email"));
-                employee.setBirth(rs.getString("date_of_birth"));
-                employee.setStart(rs.getString("date_of_start"));
+                employee.setBirth(rs.getDate("date_of_birth"));
+                employee.setStart(rs.getDate("date_of_start"));
                 employee.setRole(rs.getString("role"));
                 employees.add(employee);
             }
@@ -113,8 +113,8 @@ public class Database{
                     employee.setSurname(rs.getString("surname"));
                     employee.setPhone(rs.getString("phone_no"));
                     employee.setEmail(rs.getString("email"));
-                    employee.setBirth(rs.getString("date_of_birth"));
-                    employee.setStart(rs.getString("date_of_start"));
+                    employee.setBirth(rs.getDate("date_of_birth"));
+                    employee.setStart(rs.getDate("date_of_start"));
                     employees.add(employee);
                 }
 
@@ -152,8 +152,8 @@ public class Database{
                     employee.setSurname(rs.getString("surname"));
                     employee.setPhone(rs.getString("phone_no"));
                     employee.setEmail(rs.getString("email"));
-                    employee.setBirth(rs.getString("date_of_birth"));
-                    employee.setStart(rs.getString("date_of_start"));
+                    employee.setBirth(rs.getDate("date_of_birth"));
+                    employee.setStart(rs.getDate("date_of_start"));
 
                 return employee;
             }
@@ -170,14 +170,30 @@ public class Database{
 
     public void insertEmployee(Employee employee){
 
-        String query = "INSERT INTO employee_database.employee (employee_ID, username, password, name, surname, phone_no, email, date_of_birth" + 
-            ", date_of_start, role)VALUES ('" +  employee.getID() + "', '" + employee.getUsername() + "', '" + 
-            employee.getPassword() + "', '" + employee.getName() + "', '" + employee.getSurname() + "', '" + employee.getPhone() + "', '" +
-            employee.getEmail() + "', '" + employee.getBirth() + "', '" + employee.getStart() + "', '" + employee.getRole() + "') ";
-        try{
-            PreparedStatement pStatement = connection.prepareStatement(query);
+        String query = "INSERT INTO employee_database.employee (username, password, name, surname, phone_no, email, date_of_birth" + 
+        ", date_of_start, role) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ?)";
+
+        // String query = "INSERT INTO employee_database.employee (employee_ID, username, password, name, surname, phone_no, email, date_of_birth" + 
+        //     ", date_of_start, role)VALUES ('" +  employee.getID() + "', '" + employee.getUsername() + "', '" + 
+        //     employee.getPassword() + "', '" + employee.getName() + "', '" + employee.getSurname() + "', '" + employee.getPhone() + "', '" +
+        //     employee.getEmail() + "', '" + employee.getBirth() + "', '" + employee.getStart() + "', '" + employee.getRole() + "') ";
+
+        try(PreparedStatement pStatement = connection.prepareStatement(query)){
+            
+            pStatement.setString(1, employee.getUsername());
+            pStatement.setString(2,employee.getPassword());
+            pStatement.setString(3,employee.getName());
+            pStatement.setString(4,employee.getSurname());
+            pStatement.setString(5,employee.getPhone());
+            pStatement.setString(6,employee.getEmail());
+            pStatement.setDate(7,employee.getBirth());
+            pStatement.setDate(8,employee.getStart());
+            pStatement.setString(9,employee.getRole());
+
             if (pStatement.executeUpdate(query) > 0)
                 System.out.println("Employee inserted successfully!");
+            else
+                System.out.println("Insert failed!");
         }
         catch(SQLException sqlException){
             sqlException.printStackTrace();
@@ -187,12 +203,17 @@ public class Database{
     public void updateEmployee(Employee employee, String column, String value){
 
         int ID = employee.getID();
-        String query = "UPDATE employee_database.employee SET ? = ? WHERE employee_ID = ? ";
-        // String query = "UPDATE employee_database.employee SET " + column + " = '" + value + "' WHERE employee_ID = '" + ID + "'";
-        try{
-            PreparedStatement pStatement = connection.prepareStatement(query);
+        String query = "UPDATE employee_database.employee SET " + column + " = ? WHERE employee_ID = ? ";
+        try(PreparedStatement pStatement = connection.prepareStatement(query);){
+
+            pStatement.setString(1, value);
+            pStatement.setInt(2, ID);
+
             if (pStatement.executeUpdate() > 0)
                 System.out.println("Employee updated successfully!");
+            else
+                System.out.println("Update failed.");
+
         }
         catch(SQLException sqlException){
             sqlException.printStackTrace();
@@ -202,11 +223,13 @@ public class Database{
     public void deleteEmployee(Employee employee){
 
         int ID = employee.getID();
-        String query = "DELETE FROM employee_database.employee WHERE employee_ID = '" + ID + "'";
-        try{
-            PreparedStatement pStatement = connection.prepareStatement(query);
+        String query = "DELETE FROM employee_database.employee WHERE employee_ID = ?";
+        try(PreparedStatement pStatement = connection.prepareStatement(query)){
+            pStatement.setInt(1, ID);
             if (pStatement.executeUpdate() > 0)
                 System.out.println("Employee deleted successfully!");
+            else
+                System.out.println("Delete failed!");
         }
         catch(SQLException sqlException){
             sqlException.printStackTrace();
@@ -218,6 +241,8 @@ public class Database{
         try{
             if(connection!=null && !connection.isClosed())
                 connection.close();
+            else
+                System.out.println("Disconnection error!");
         }
         catch(SQLException sqlException){
         }

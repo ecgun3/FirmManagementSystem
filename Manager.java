@@ -9,6 +9,13 @@ import java.util.Scanner;
 
 public class Manager extends Employee{
     
+    //constructor
+    public Manager(int id, String username, String password, String name, String surname, 
+    String phoneNumber, String email, String dateOfBirth, String dateOfStart, String role) {
+super(id, username, password, name, surname, phoneNumber, email, dateOfBirth, dateOfStart, role);
+}
+
+
     public void displayMenu()
     {
         while (true){
@@ -29,7 +36,7 @@ public class Manager extends Employee{
 
         switch(choice) {
             case 1: 
-                updateProfile(getEmail(), getPhoneNumber());
+                updateProfile(getEmail(), getPhoneNo());
                 break;
             case 2: 
                 displayAllEmployees();
@@ -68,7 +75,7 @@ public class Manager extends Employee{
     @Override
     public void updateProfile(String newEmail, String newPhoneNumber) {
         setEmail(newEmail);
-        setPhoneNumber(newPhoneNumber);
+        setPhoneNo(newPhoneNumber);
         System.out.println("Profile updated successfully!");
     }
 
@@ -79,12 +86,12 @@ public class Manager extends Employee{
     
         for (Employee employee : employees) {
             System.out.printf("%-10d %-15s %-15s %-15s %-15s %-15s %-20s %-20s %-15s\n", 
-                    employee.getId(),
+                    employee.getEmployeeID(),
                     employee.getUsername(),
                     employee.getRole(),
                     employee.getName(),
                     employee.getSurname(),
-                    employee.getPhoneNumber(),
+                    employee.getPhoneNo(),
                     employee.getEmail(),
                     employee.getDateOfBirth(),
                     employee.getDateOfStart());
@@ -193,9 +200,6 @@ public class Manager extends Employee{
         System.out.print("Username: ");
         String username = scan.nextLine();
 
-        System.out.print("Password: ");
-        String password = scan.nextLine();
-
         System.out.print("Name: ");
         String name = scan.nextLine();
 
@@ -218,22 +222,12 @@ public class Manager extends Employee{
         String role = scan.nextLine();
 
         Employee hire;
-    if (role.equalsIgnoreCase("Manager")) {
-        hire = new Manager();
-    } else {
-        hire = new RegularEmployee();
-    }
 
-        hire.setId(employeeId);
-        hire.setUsername(username);
-        hire.setPassword(password);
-        hire.setName(name);
-        hire.setSurname(surname);
-        hire.setPhoneNumber(phoneNo);
-        hire.setEmail(email);
-        hire.setdateOfBirth(birthdate);
-        hire.setdateOfStart(startdate);
-        hire.setRole(role);
+        if (role.equalsIgnoreCase("Manager")) {
+            hire = new Manager(employeeId, username, "defaultPassword", name, surname, phoneNo, email, birthdate, startdate, role);
+        } else {
+            hire = new RegularEmployee(employeeId, username, "defaultPassword", name, surname, phoneNo, email, birthdate, startdate, role);
+        }
 
         Database database = new Database();
         database.connectDatabase();
@@ -251,6 +245,13 @@ public class Manager extends Employee{
             System.out.println("Enter the id for the delete operation");
             int employeeID = scan.nextInt();
             scan.nextLine();
+            
+            int managerId =;
+                //menajerin kendisini silememesi için
+            if (employeeID == managerId) {
+                System.out.println("You cannot delete your own account.");
+                return;
+            }
 
             Employee employeetodelete = database.getEmployees().stream().filter(e -> e.getId() == employeeID).findFirst().orElse(null); // DÜZELTMEK LAZIM
 
@@ -278,7 +279,7 @@ public class Manager extends Employee{
             int employeeID = scan.nextInt();
             scan.nextLine();
 
-            Employee employeetoupdate = database.getEmployees().stream().filter(e -> e.getId() == employeeID).findFirst().orElse(null); //süpheli
+            Employee employeetoupdate = database.getEmployees().stream().filter(e -> e.getEmployeeID() == employeeID).findFirst().orElse(null); //süpheli
 
             if(employeetoupdate != null){
                 System.out.println("Enter the column to update(id,username,name,surname,role,birthdate,startdate)");
@@ -298,6 +299,10 @@ public class Manager extends Employee{
     database.disconnectDatabase();
     }
 
+    @Override
+    public void displayProfile() {
+       //dummy
+    }
 
     /*ALGORITHMS sekmesi gelecek
 

@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+
 public class Manager extends Employee{
 
     public Manager(){
@@ -172,6 +173,7 @@ public class Manager extends Employee{
         }
     
     database.disconnectDatabase();
+    returnToMenu();
     }
 
     //username'e göre display burda şifreyi gizlememiz lazım
@@ -198,6 +200,7 @@ public class Manager extends Employee{
             e.printStackTrace();    
         }
         database.disconnectDatabase();
+        returnToMenu();
     }
 
     private String usernameCheck(Scanner scan){
@@ -313,6 +316,7 @@ public class Manager extends Employee{
         database.connectDatabase();
         database.insertEmployee(hire);
         database.disconnectDatabase();
+        returnToMenu();
     }
 
     //employee silme
@@ -358,6 +362,7 @@ public class Manager extends Employee{
             }
 
     database.disconnectDatabase();
+    returnToMenu();
     }
 
     private String Date(){
@@ -455,6 +460,21 @@ public class Manager extends Employee{
             e.printStackTrace();    
         }
         database.disconnectDatabase();
+        returnToMenu();
+    }
+
+    public void returnToMenu(){
+        System.out.println("Press 'M' to return main menu");
+    
+        Scanner scan = new Scanner(System.in);
+        while (true) {
+            String input = scan.nextLine();
+
+            if (input.equalsIgnoreCase("M"))
+                managerMenu();
+            else
+                System.out.println("Invalid input. Please press 'M' to return to the menu.");
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ import java.util.Random; // To generate random array
 import java.util.Arrays; 
 import java.util.*; // For Collection.sort()
 
-public class Algorithms {
+public class Algorithm {
 
     public static void radixSort(int[] arr) {
         if (arr == null || arr.length == 0) 
@@ -246,9 +246,7 @@ public class Algorithms {
         return Arrays.equals(sortedArr, javaSortArr);
     }
 
-
-
-    public static void main(String[] args)
+    public static void runAlgorithms()
     {
         int size = 0;
         Scanner input = new Scanner(System.in);
@@ -335,4 +333,11 @@ public class Algorithms {
 
         //return menu
     }
+    
+
+    public static void main(String[] args)
+    {
+        runAlgorithms();
+    }
+        
 }

@@ -1,5 +1,4 @@
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 
 //Çalışan türlerinin temel sınıfı --> Abstract
 public abstract class Employee {

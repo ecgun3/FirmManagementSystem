@@ -58,6 +58,12 @@ public class RegularEmployee extends Employee {
         int choice = scanner.nextInt();
         scanner.nextLine(); //Clear buffer because we call nextInt before
 
+        // Invalid choice
+        if (choice < 1 || choice > 3) {
+            System.out.println("Invalid choice! Please choose a valid option.");
+            return; // End the method if the input is invalid
+        }
+
         if(choice == 1 || choice == 3) {
             System.out.println("Enter new mail:");
             String newEmail = scanner.nextLine();

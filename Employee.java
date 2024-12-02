@@ -58,15 +58,21 @@ public abstract class Employee {
 
     //en az bir değişik karakter ve en az bir sayı eklesin (boşluk olamaz)
     public void setPassword(String newPassword) {
-        if(newPassword.length() >= 8 && newPassword.matches(".*\\d.*") && newPassword.matches(".*[a-zA-Z].*") && !newPassword.contains(" ")) {
+        // Şifreyi kontrol et
+        if (newPassword.length() >= 8 && 
+            newPassword.matches(".*[A-Z].*") && // En az bir büyük harf
+            newPassword.matches(".*[a-z].*") && // En az bir küçük harf
+            newPassword.matches(".*[0-9].*") && // En az bir rakam
+            newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*") && // En az bir özel karakter
+            !newPassword.contains(" ")) { // Şifre boşluk içermemeli
             this.password = newPassword;
             this.isDefaultPassword = false;
             System.out.println("Password updated successfully!");
         } else {
-            System.out.println("Password must be at least 8 characters long, contain at least one digit, one letter, and no spaces.");
+            System.out.println("Password must be at least 8 characters long, include a mix of uppercase, lowercase, numbers, and special characters, and not contain spaces.");
         }
     }
-
+    
     public boolean isDefaultPassword() {
         return isDefaultPassword;
     }

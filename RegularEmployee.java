@@ -1,9 +1,11 @@
+import java.sql.Date;
+
 public class RegularEmployee extends Employee {
 
     // Constructor
     public RegularEmployee(int employeeID, String username, String password, String role, 
                            String name, String surname, String phoneNo, 
-                           String dateOfBirth, String dateOfStart, String email) {
+                           Date dateOfBirth, Date dateOfStart, String email) {
         // Parent class constructor çağırıldı
         super(employeeID, username, password, role, name, surname, phoneNo, dateOfBirth, dateOfStart, email);
     }

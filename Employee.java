@@ -1,3 +1,5 @@
+import java.sql.Date;
+
 public abstract class Employee {
 
     protected int employeeID;
@@ -7,14 +9,14 @@ public abstract class Employee {
     protected String name;
     protected String surname;
     protected String phoneNo;
-    protected String dateOfBirth;
-    protected String dateOfStart;
+    protected Date dateOfBirth;
+    protected Date dateOfStart;
     protected String email;
 
     // Constructor
     public Employee(int employeeID, String username, String password, String role, String name, 
-                    String surname, String phoneNo, String dateOfBirth, 
-                    String dateOfStart, String email) {
+                    String surname, String phoneNo, Date dateOfBirth, 
+                    Date dateOfStart, String email) {
         this.employeeID = employeeID;
         this.username = username;
         this.password = password;
@@ -84,19 +86,19 @@ public abstract class Employee {
         this.phoneNo = phoneNo;
     }
 
-    public String getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getDateOfStart() {
+    public Date getDateOfStart() {
         return dateOfStart;
     }
 
-    public void setDateOfStart(String dateOfStart) {
+    public void setDateOfStart(Date dateOfStart) {
         this.dateOfStart = dateOfStart;
     }
 

@@ -1,6 +1,8 @@
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class Manager extends Employee{
 
@@ -21,7 +23,7 @@ public class Manager extends Employee{
         String title = this.name + " " + this.surname;
         System.out.println(title);
         System.out.println("----Manager Menu----");
-        System.out.println("1. Update Own Profile");
+        System.out.println("1. See Profile Informations");
         System.out.println("2. Display All Employees");
         System.out.println("3. Display Employees with the Role");
         System.out.println("4. Display Employee with the Username");
@@ -114,15 +116,9 @@ public class Manager extends Employee{
         Database database = new Database();
         database.connectDatabase();
 
-        // try{
             ArrayList<Employee> employees = database.getEmployees();
             displayEmployeeDetails(employees);
-        // }
-        
-        // catch(Exception e) {
-        //         System.err.println("Something went Wrong.");
-        //         e.printStackTrace();
-        // }
+
         database.disconnectDatabase();
         return employees;
     }  
@@ -153,6 +149,7 @@ public class Manager extends Employee{
             default:
                 return null; // Geçersiz seçim
         }
+
     }
 
     //role göre seçim yaparak display
@@ -175,7 +172,6 @@ public class Manager extends Employee{
         }
     
     database.disconnectDatabase();
-    returnToMenu();
     }
 
     //username'e göre display burda şifreyi gizlememiz lazım
@@ -202,38 +198,37 @@ public class Manager extends Employee{
             e.printStackTrace();    
         }
         database.disconnectDatabase();
-        returnToMenu();
     }
 
-    //yeni employee girişi exception lazım
-    private void hireEmployee(){
-        ArrayList<Employee> employees=displayAllEmployees();
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Enter new employee information:");
+    private String usernameCheck(Scanner scan){
 
+        Database database = new Database();
+        database.connectDatabase();
+        ArrayList<Employee> employees=database.getEmployees();
         boolean success=true;
+        System.out.println("aa");
         String username = "";
         while(success){
-            System.out.print("Username: ");
             username = scan.nextLine();
             for(Employee employee : employees){
                 if(employee.getUsername().equals(username)){
                     System.out.println("This username already taken. Please enter another username!");
+                    System.out.print("Username: ");
                     success=false;
                     break;
-                }
+                }                
             }
+            break;
         }
+        return username;
+    }
 
-        String defaultPassword = "password123";
+    private String phoneCheck(Scanner scan){
 
-        System.out.print("Name: ");
-        String name = scan.nextLine();
-
-        System.out.print("Surname: ");
-        String surname = scan.nextLine();
-
-        success=true;
+        Database database = new Database();
+        database.connectDatabase();
+        ArrayList<Employee> employees=database.getEmployees();
+        boolean success=true;
         String phoneNo = "";
         while(success){
             System.out.print("Phone Number: ");
@@ -251,6 +246,29 @@ public class Manager extends Employee{
                 }
             }
         }
+        employees=null;
+        return phoneNo;
+    } 
+
+    //yeni employee girişi exception lazım
+    private void hireEmployee(){
+
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Enter new employee information:");
+
+        System.out.print("username: ");
+        String username = usernameCheck(scan);
+
+        String defaultPassword = "password123";
+
+        System.out.print("Name: ");
+        String name = scan.nextLine();
+
+        System.out.print("Surname: ");
+        String surname = scan.nextLine();
+
+        String phoneNo = phoneCheck(scan);
 
         //Valid email: ece.gunaydin@example.com
         //Invalid email: ece.gunaydin@com
@@ -263,12 +281,12 @@ public class Manager extends Employee{
                 System.out.println("Please enter a proper email!: ");
         }
         
-        System.out.print("Date of Birth (YYYY-MM-DD): ");
-        String birthdate = scan.nextLine();//date ekleme düzenlencek
+        System.out.print("Date of Birth - ");
+        String birthdate = Date();
         Date date1 = Date.valueOf(birthdate);
 
-        System.out.print("Start Date (YYYY-MM-DD): ");
-        String startdate = scan.nextLine();//date ekleme düzenlencek
+        System.out.print("Start Date - ");
+        String startdate = Date();
         Date date2 = Date.valueOf(startdate);
 
             //rol ekleme kısmı
@@ -295,7 +313,6 @@ public class Manager extends Employee{
         database.connectDatabase();
         database.insertEmployee(hire);
         database.disconnectDatabase();
-        returnToMenu();
     }
 
     //employee silme
@@ -303,14 +320,32 @@ public class Manager extends Employee{
         Database database = new Database();
         database.connectDatabase();
         
-        try{
             Scanner scan = new Scanner(System.in);
-            System.out.println("Enter the username for the delete operation");
-            String username = scan.nextLine();
-            
-            if (username == this.username) {
-                System.out.println("You cannot delete your own account.");
-                return;
+            String username="";
+            boolean flag=true;
+            while(flag){
+                System.out.printf("Enter the username for the delete operation: ");
+                username = scan.nextLine();
+                //menajerin kendisini silememesi için
+                if (this.username == username) {
+                    System.out.println("You cannot delete your own account.");
+                    while(true){
+                        System.out.println("If you want to delete another employee press 1, or back to main menu press 2");
+                        int choice = scan.nextInt();
+                        scan.nextLine();
+                        switch(choice){
+                            case 1:
+                                continue;
+                            case 2:
+                                break;
+                            default:
+                                System.out.println("Invalid choice!");
+                        }
+                    }
+                }
+                else
+                    break;
+
             }
 
             Employee employeetodelete = database.getEmployeeUsername(username);
@@ -319,14 +354,35 @@ public class Manager extends Employee{
                 database.deleteEmployee(employeetodelete);
                 System.out.println("Employee with Username: " + username +" Deleted.");
             }else {
-            System.out.println("employee not found:" + username);
+                System.out.println("employee not found:" + username);
             }
-        }catch(Exception e) {
-        System.err.println("An error occurred while deleting employee");
-        e.printStackTrace();    
-        }
+
     database.disconnectDatabase();
-    returnToMenu();
+    }
+
+    private String Date(){
+
+        String date = "";
+        Scanner scan = new Scanner(System.in);
+        String properDate = "yyyy-mm-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(properDate);
+        sdf.setLenient(false);
+
+        boolean flag=true;
+        while(flag){
+
+            System.out.println("Please enter an appropriate date(YYYY-MM-DD): ");
+            date = scan.nextLine();
+            try{
+                sdf.parse(date);
+                flag = false;
+            }
+            catch(ParseException exception){
+            }
+            
+        }
+        scan.close();
+        return date;
     }
 
     //employee güncelleme
@@ -355,31 +411,41 @@ public class Manager extends Employee{
                 int choice = scan.nextInt();
                 scan.nextLine();
 
+                String value="";
+
                 switch (choice) {
                     case 1:
                         column = "username";
+                        System.out.printf("%nEnter the new value for " + column);
+                        value = usernameCheck(scan);
                         break;
                     case 2:
                         column = "name";
+                        System.out.printf("%nEnter the new value for " + column);
+                        value = scan.nextLine();
                         break;
                     case 3:
                         column = "surname";
+                        System.out.printf("%nEnter the new value for " + column);
+                        value = scan.nextLine();
                         break;
                     case 4:
-                        column = "role"; //selectrole fonksiyonu gelcek
+                        column = "role";
+                        System.out.printf("%nEnter the new value for " + column);
+                        value = selectRole();
                         break;
                     case 5:
-                        column = "date1";  //degiscek
+                        column = "date_of_birth";
+                        value = Date();
                         break;
                     case 6:
-                        column = "date2"; //degiscek
+                        column = "date_of_start";
+                        value = Date();
                         break;
                     default:
                         System.out.println("Invalid choice! Please enter a number between 1 and 6.");
                         return;
                 }
-                System.out.println("Enter the new value for " + column);
-                String value = scan.nextLine();
                 database.updateEmployee(employeetoupdate, column, value);
             }else
                 System.out.println("Employee not found:" + username);
@@ -389,26 +455,11 @@ public class Manager extends Employee{
             e.printStackTrace();    
         }
         database.disconnectDatabase();
-        returnToMenu();
     }
 
     @Override
     public void displayProfile() {
        //dummy
-    }
-
-    public void returnToMenu(){
-        System.out.println("Press 'M' to return main menu");
-    
-        Scanner scan = new Scanner(System.in);
-        while (true) {
-            String input = scan.nextLine();
-
-            if (input.equalsIgnoreCase("M"))
-                managerMenu();
-            else
-                System.out.println("Invalid input. Please press 'M' to return to the menu.");
-        }
     }
 
     /*ALGORITHMS gelecek

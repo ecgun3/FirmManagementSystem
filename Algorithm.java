@@ -1,102 +1,120 @@
-import java.util.Scanner; //to specify dataset size
-import java.util.Random; //to generate random array
+import java.util.Scanner; // To specify dataset size
+import java.util.Random; // To generate random array
 import java.util.Arrays; 
-import java.util.*; //for Collection.sort()
+import java.util.*; // For Collection.sort()
 
 public class Algorithms {
 
+    public static void radixSort(int[] arr) {
+        if (arr == null || arr.length == 0) 
+        {
+            return; // If size is 0 don't do anything
+        }
+    
+        // Put negative and pozitive values into different arrays
+        int negativeCount = 0;
+        for (int value : arr) 
+        {
+            if (value < 0) 
+            {
+                negativeCount++;
+            }
+        }
+    
+        int[] negatives = new int[negativeCount]; // Negative values as an array
+        int[] positives = new int[arr.length - negativeCount]; // Positive values as an array
+    
+        int negIndex = 0, posIndex = 0;
+        for (int value : arr) 
+        {
+            if (value < 0) 
+            {
+                negatives[negIndex++] = -value; // Turn negative numbers to positive
+            } 
+            
+            else 
+            {
+                positives[posIndex++] = value; // If positive put it into positive array
+            }
+        }
+    
+        // Sort negative and positive arrays
+        if (negatives.length > 0) 
+        {
+            radixSortPositive(negatives);
+        }
 
-    public static void radixSort(int[] arr)
+        if (positives.length > 0) 
+        {
+            radixSortPositive(positives);
+        }
+    
+        // Reverse the negative array convert the values to negative and place them in the array
+        for (int i = 0; i < negatives.length; i++) 
+        {
+            arr[i] = -negatives[negatives.length - 1 - i];
+        }
+    
+        // Add  the positive array
+        for (int i = 0; i < positives.length; i++) 
+        {
+            arr[negatives.length + i] = positives[i];
+        }
+    }
+    
+    private static void radixSortPositive(int[] arr) 
     {
-        if(arr.length == 0 || arr == null)
-        {
-            return; //if size is 0
-        }
-
         int max = maxValue(arr);
-        int min = minValue(arr);
-
-        //if there are negative numbers 
-        int offset;
-        if (min < 0) 
-        {
-            offset = -min;
-        } 
-        else 
-        {
-            offset = 0;
-        }
-
-        for (int i = 0; i < arr.length; i++) 
-        {
-            arr[i] += offset;
-        }
-
+    
         int exp = 1;
-
-        while(max / exp > 0)
+        while (max / exp > 0) 
         {
             sortCount(arr, exp);
             exp *= 10;
         }
-
-        for (int i = 0; i < arr.length; i++) 
-        {
-            arr[i] -= offset;
-        }
     }
-    private static int minValue(int[] arr) 
-    {
-        int min = arr[0];
-        for (int value : arr) 
-        {
-            if (value < min) 
-            {
-                min = value;
-            }
-        }
-        return min;
-    }
-    //finds max value to initialize most significant bit
-    private static int maxValue(int[] arr)
+    
+    private static int maxValue(int[] arr) 
     {
         int max = arr[0];
-        for(int value : arr)
+        for (int value : arr) 
         {
-            if(value > max)
+            if (value > max) 
             {
                 max = value;
             }
         }
         return max;
     }
-    private static void sortCount(int[] arr, int exp)
+    
+    private static void sortCount(int[] arr, int exp) 
     {
         int n = arr.length;
         int[] sorted = new int[n];
-        int[] count = new int[19]; //counts numbers from -9 to 9
-
-        for(int i = 0; i < n; i++)
-        {
-            int digit = (arr[i] / exp) % 10 + 9;
+        int[] count = new int[10]; // Counts numbers from 0 to 9
+    
+        // Count the digits
+        for (int i = 0; i < n; i++) {
+            int digit = (arr[i] / exp) % 10;
             count[digit]++;
         }
-
-        for(int i = 1; i < 19; i++)
-        {
+    
+        // Kümülatif toplama
+        for (int i = 1; i < 10; i++) {
             count[i] += count[i - 1];
         }
-
-        for(int i = n - 1; i >= 0; i--)
-        {
-            int digit = (arr[i] / exp) % 10 + 9;
+    
+        // Sort numbers
+        for (int i = n - 1; i >= 0; i--) {
+            int digit = (arr[i] / exp) % 10;
             sorted[count[digit] - 1] = arr[i];
             count[digit]--;
         }
-
+    
+        // Copy sorted array to original array
         System.arraycopy(sorted, 0, arr, 0, n);
     }
-
+        
 
 
     public static void shellSort(int[] arr)
@@ -239,6 +257,7 @@ public class Algorithms {
         while(!flg)
         {   
             System.out.printf("Enter size between 1,000 to 10,000: ");
+
             if(input.hasNextInt())
             {
                 size = input.nextInt();
@@ -278,7 +297,9 @@ public class Algorithms {
         long heapTime = executionTime(() -> heapSort(heapArray));
         long insertionTime = executionTime(() -> insertionSort(insertionArray));
 
-        /*if(sortCheck(radixArray, array) && sortCheck(shellArray, array) && sortCheck(heapArray, array) && sortCheck(insertionArray, array))
+        System.out.println();
+
+        if(sortCheck(radixArray, array) && sortCheck(shellArray, array) && sortCheck(heapArray, array) && sortCheck(insertionArray, array))
         {
             System.out.println("Algorithms produced correct results.");
         }
@@ -286,7 +307,10 @@ public class Algorithms {
         else
         {
             System.out.println("Some algorithms produced incorrect results.");
-        }*/
+        }
+
+        System.out.println();
+
         if(sortCheck(radixArray, array))
             System.out.println("Radix true");
         else
@@ -300,12 +324,14 @@ public class Algorithms {
             
         if(sortCheck(insertionArray, array))
             System.out.println("Insertion true");
+        
+        System.out.println();
             
         System.out.println("Execution Times:");
-        System.out.println("Radix Sort: " + radixTime);
-        System.out.println("Shell Sort: " + shellTime);
-        System.out.println("Heap Sort: " + heapTime);
-        System.out.println("Insertion Sort: " + insertionTime);
+        System.out.println("Radix Sort: " + radixTime + " ns");
+        System.out.println("Shell Sort: " + shellTime + " ns");
+        System.out.println("Heap Sort: " + heapTime + " ns");
+        System.out.println("Insertion Sort: " + insertionTime + " ns");
 
         //return menu
     }

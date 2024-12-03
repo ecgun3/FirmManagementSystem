@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.lang.Thread;
+
 public class Main {
 
     public static final String ANSI_PURPLE = "\u001B[35m";//ANSI codes for colors used for coloring the ASCII
@@ -41,7 +42,7 @@ public class Main {
             System.out.println(" "+line);
 
             try {
-                Thread.sleep(400);
+                Thread.sleep(40);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -93,7 +94,7 @@ public class Main {
                             System.out.println("You are directed to the Manager Menu");
 
                             try {//upper string will appear for two seconds after that the console will be cleared
-                                Thread.sleep(1200);
+                                Thread.sleep(800);
                                 clearConsole();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();

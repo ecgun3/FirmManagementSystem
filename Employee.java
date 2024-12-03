@@ -190,8 +190,7 @@ public abstract class Employee {
                     flag=false;
                     System.out.println("Enter the new value for " + column);
                     while(true){
-                        value = scan.nextLine();
-                        validString(value);
+                        value = validString();
                         if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
                             break;
                         else
@@ -217,8 +216,7 @@ public abstract class Employee {
         String newPassword = "";
         while(true){
             System.out.print("Password: ");
-            newPassword = scan.nextLine();
-            validString(newPassword);
+            newPassword=validString();
 
             //Calculate password strength
             int score = evaluatePasswordStrenght(newPassword);
@@ -315,19 +313,16 @@ public abstract class Employee {
         String value = "";
 
         while(flag){
-            if (column =="phone_no"){
-                if(!phoneNo.matches("\\d{10}"))
-                    System.out.println("This phone number is not correct. Please enter 10 digit phone number!");
-            }
+            value = validString();
+            if("phone_no".equals(column) && !phoneNo.matches("\\d{10}"))
+                System.out.println("This phone number is not correct. Please enter 10 digit phone number!");
             else{
-                value = scan.nextLine();
-                validString(value);
                 if(!database.uniqueness(column, value)){
-                    if(column=="username"){
+                    if("username".equals(column)){
                         System.out.println("This username already taken. Please enter another username!");
                         System.out.print("Username: ");
                     }
-                    else if (column=="phone_no"){
+                    else if ("phone_no".equals(column)){
                             System.out.println("This phone number is belong to someone else. Please enter different phone number!");
                     }
                 }
@@ -381,14 +376,14 @@ public abstract class Employee {
         return countryCode;
     }
 
-    public String validString(String username) {
+    public String validString() {
 
+        String str;
         while (true) 
         {
-            System.out.print("Enter a maximum 45 characters: ");
-            username = scan.nextLine();
+            str = scan.nextLine();
 
-            if (username.length() <= 45) 
+            if (str.length() <= 45) 
             {
                 break; // Exit the loop if the user entered valid input
             } 
@@ -398,7 +393,7 @@ public abstract class Employee {
             }
         }
 
-        return username;
+        return str;
     }
 
     public int getValidInt() {

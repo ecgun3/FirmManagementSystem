@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 
+
 public class Manager extends Employee{
 
     private Database database = new Database();
@@ -142,8 +143,7 @@ public class Manager extends Employee{
         try{
 
             System.out.println("Enter the username for the search");
-            String username = scan.nextLine();
-            validString(username);
+            String username = validString();
             Employee employee = database.getEmployeeUsername(username);
             ArrayList<Employee> employees = new ArrayList<>();
 
@@ -172,19 +172,20 @@ public class Manager extends Employee{
         String defaultPassword = "password123";
 
         System.out.print("Name: ");
-        String name =checkPhoneAndUsername("name");
+        String name =nameSurnameCheck();
 
         System.out.print("Surname: ");
-        String surname = checkPhoneAndUsername("surname");
+        String surname = nameSurnameCheck();
 
-        String phoneNo = countryCode() + " " + checkPhoneAndUsername("phone_no");//stringin 3 3 2 2 bölcek!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String phoneNo = countryCode() + " ";
+        System.out.print("Phone No: ");
+        phoneNo = phoneNo + checkPhoneAndUsername("phone_no");//stringin 3 3 2 2 bölcek!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         //Valid email: ece.gunaydin@example.com
         //Invalid email: ece.gunaydin@com
         System.out.print("Email: ");
         while(true){
-            String email = scan.nextLine();
-            validString(email);
+            String email = validString();
             if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
                 break;
             else
@@ -232,8 +233,7 @@ public class Manager extends Employee{
             boolean flag=true;
             while(flag){
                 System.out.printf("Enter the username for the delete operation: ");
-                username = scan.nextLine();
-                validString(username);
+                username = validString();
                 //menajerin kendisini silememesi için
                 if (this.username == username) {
                     System.out.println("You cannot delete your own account.");
@@ -277,8 +277,7 @@ public class Manager extends Employee{
 
             System.out.println("Enter the username for the update operation:");
             System.out.println("Username: ");
-            String username = scan.nextLine();
-            validString(username);
+            String username = validString();
 
             Employee employeetoupdate = database.getEmployeeUsername(username);
 
@@ -305,12 +304,12 @@ public class Manager extends Employee{
                     case 2:
                         column = "name";
                         System.out.printf("%nEnter the new value for " + column);
-                        value = nameSurnameCheck("name");
+                        value = nameSurnameCheck();
                         break;
                     case 3:
                         column = "surname";
                         System.out.printf("%nEnter the new value for " + column);
-                        value = nameSurnameCheck("surname");
+                        value = nameSurnameCheck();
                         break;
                     case 4:
                         column = "role";
@@ -413,8 +412,7 @@ public class Manager extends Employee{
         while(flag){
 
             System.out.println("Please enter an appropriate date(YYYY-MM-DD): ");
-            date = scan.nextLine();
-            validString(date);
+            date = validString();
             try{
                 sdf.parse(date);
                 flag = false;
@@ -426,14 +424,13 @@ public class Manager extends Employee{
         return date;
     }
 
-    public static String nameSurnameCheck(String nameOrSurname) {
+    public static String nameSurnameCheck() {
         String input;
     
         while (true) 
         {
-            System.out.print("Enter " + nameOrSurname + " (Alphabetical, max 45 characters): ");
             input = scan.nextLine().trim();
-    
+            
             // Check for length and whether all characters are alphabetical
             if (input.length() <= 45 && isAlpha(input)) 
             {
@@ -454,7 +451,7 @@ public class Manager extends Employee{
                 System.out.println("Invalid input. Please enter only alphabetical characters (max 45 characters).");
             }
         }
-    
+        System.out.println(input);
         return input;
     }
     

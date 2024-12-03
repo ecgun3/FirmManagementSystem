@@ -218,14 +218,16 @@ public class Database{
 
     public boolean uniqueness(String column, String value){
 
-        String query = "SELECT EXISTS (SELECT 1 FROM employee WHERE " + column +  " = ?)";
+        String query = "SELECT EXISTS (SELECT 1 FROM employee WHERE " + column +  " = ? )";
         try(PreparedStatement pStatement = connection.prepareStatement(query);){
 
-            ResultSet rs = pStatement.executeQuery();
             pStatement.setString(1, value);
+
+            try(ResultSet rs = pStatement.executeQuery()){
 
             if (rs.next())
                 return !rs.getBoolean(1);
+            }
 
         }
         catch(SQLException sqlException){

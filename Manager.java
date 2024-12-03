@@ -34,9 +34,7 @@ public class Manager extends Employee{
         System.out.println("8. Algorithms");
         System.out.println("9. Logout");
 
-        Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice = getValidInt();
 
         switch(choice) {
             case 1: 
@@ -65,13 +63,12 @@ public class Manager extends Employee{
                 break;
             case 9: 
                 System.out.println("Logging Out...");
-                break;
+                return;
             default: 
                 System.out.println("Invalid Choice. Please Try Again.");
                 continue;
         }
 
-        if(choice == 9) break;
         }
     }
 
@@ -119,13 +116,13 @@ public class Manager extends Employee{
 
             ArrayList<Employee> employees = database.getEmployees();
             displayEmployeeDetails(employees);
+            askForEmployeeInfoChange();
 
         database.disconnectDatabase();
         return employees;
     }  
 
     public String selectRole() {
-        Scanner scan = new Scanner(System.in);
     
         //display rolemenu
         System.out.println("Select a role to display employees:");
@@ -135,8 +132,7 @@ public class Manager extends Employee{
         System.out.println("4. Technician");
         System.out.print("Choose a role from menu: ");
     
-        int choice = scan.nextInt();
-        scan.nextLine();
+        int choice = getValidInt();
 
         switch (choice) {
             case 1:
@@ -144,11 +140,11 @@ public class Manager extends Employee{
             case 2:
                 return "Engineer";
             case 3:
-                return "Intern";
+            return "Intern";
             case 4:
                 return "Technician";
             default:
-                return null; // Geçersiz seçim
+                selectRole(); // Geçersiz seçim
         }
 
     }
@@ -166,6 +162,7 @@ public class Manager extends Employee{
             }
             ArrayList<Employee> employees = database.getEmployeesRole(role);
             displayEmployeeDetails(employees);
+            askForEmployeeInfoChange();
             }
         catch (Exception e) {
             System.err.println("An error occurred while displaying employees by role.");
@@ -226,32 +223,79 @@ public class Manager extends Employee{
         return username;
     }
 
-    private String phoneCheck(Scanner scan){
-
+    private String phoneCheck(Scanner scan) {
         Database database = new Database();
         database.connectDatabase();
-        ArrayList<Employee> employees=database.getEmployees();
-        boolean success=true;
+        ArrayList<Employee> employees = database.getEmployees();
+        boolean success = true;
         String phoneNo = "";
-        while(success){
-            System.out.print("Phone Number: ");
+        String countryCode = "";
+    
+        //different countries 
+        System.out.println("Lütfen bir ülke seçiniz:");
+        System.out.println("1 - USA (+1)");
+        System.out.println("2 - England (+44)");
+        System.out.println("3 - Germany (+49)");
+        System.out.println("4 - Türkiye (+90)");
+        System.out.println("5 - India (+91)");
+    
+        //country choice
+        while (true) {
+            System.out.print("Your choice: ");
+            String choice = scan.nextLine();
+            switch (choice) {
+                case "1":
+                    countryCode = "1";
+                    break;
+                case "2":
+                    countryCode = "44";
+                    break;
+                case "3":
+                    countryCode = "49";
+                    break;
+                case "4":
+                    countryCode = "90";
+                    break;
+                case "5":
+                    countryCode = "91";
+                    break;
+                default:
+                    System.out.println("Invalid selection. Please select from 1 to 5.");
+                    continue;
+            }
+            break;
+        }
+    
+        //phone number control
+        while(success) {
+            System.out.print("Phone number (10 digits)");
             phoneNo = scan.nextLine();
-            for(Employee employee : employees){
-                if(employee.getPhoneNo().equals(phoneNo)){
-                    System.out.println("This phone number is belong to someone else. Please enter different phone number!");
-                    success=false;
-                    break;
-                }
-                else if(!phoneNo.matches("\\d{10}")){
-                    System.out.println("This phone number is not correct. Please enter 10 digit phone number!");   
-                    success=false;
-                    break;
+            phoneNo = phoneNo.replaceAll("[^\\d]", "");
+            boolean isValid = true;
+            String fullPhoneNo = "+" + countryCode + phoneNo;
+            
+            if(!phoneNo.matches("\\d{10}")) {
+                System.out.println("Invalid phone number. Please enter a 10-digit number!");
+                isValid = false;
+            } else{
+                for(Employee employee : employees) {
+                    if(employee.getPhoneNo().equals(fullPhoneNo)) {
+                        System.out.println("This phone number belongs to someone else. Please enter a different number!");
+                        isValid = false;
+                        break;
+                    }
                 }
             }
+            
+            if (isValid){
+                phoneNo = fullPhoneNo;
+                success = false;
+            }
         }
-        employees=null;
+
+        employees = null;
         return phoneNo;
-    } 
+    }
 
     //yeni employee girişi exception lazım
     private void hireEmployee(){
@@ -335,8 +379,7 @@ public class Manager extends Employee{
                     System.out.println("You cannot delete your own account.");
                     while(true){
                         System.out.println("If you want to delete another employee press 1, or back to main menu press 2");
-                        int choice = scan.nextInt();
-                        scan.nextLine();
+                        int choice = getValidInt();
                         switch(choice){
                             case 1:
                                 continue;
@@ -413,8 +456,7 @@ public class Manager extends Employee{
                 System.out.println("6. Start Date (YYYY-MM-DD)");
 
                 String column = null;
-                int choice = scan.nextInt();
-                scan.nextLine();
+                int choice = getValidInt();
 
                 String value="";
 
@@ -470,12 +512,56 @@ public class Manager extends Employee{
         while (true) {
             String input = scan.nextLine();
 
-            if (input.equalsIgnoreCase("M"))
+            if (input.equalsIgnoreCase("M")){
                 managerMenu();
+                break;
+            }
             else
                 System.out.println("Invalid input. Please press 'M' to return to the menu.");
         }
     }
+
+    public void askForEmployeeInfoChange() {
+    
+    System.out.println("Do you want to change an employee information?");
+    System.out.println("1. YES");
+    System.out.println("2. NO (Return to main menu)");
+
+    while (true) {
+        int userInput = getValidInt();
+
+            if (userInput == 1) {
+                updateEmployee();
+                return;
+            } else if (userInput == 2) {
+                return;
+            } else {
+                System.out.println("Please make a valid choice (1 for YES or 2 for NO).");
+            }
+        } 
+    }
+
+
+public static int getValidInt() {
+    Scanner scanner = new Scanner(System.in);
+
+    int validInput = 0;
+
+    while (true) {
+        System.out.print("Please enter a valid integer:");
+        if (scanner.hasNextInt()) { 
+            validInput = scanner.nextInt();
+            break;
+        } else {
+            System.out.println("Invalid input. Please enter a valid integer.");
+            scanner.nextLine();
+        }
+    }
+
+    return validInput;
+}
+
+
 
     @Override
     public void displayProfile() {
@@ -490,6 +576,5 @@ public class Manager extends Employee{
     
     */
 }
-
 
 

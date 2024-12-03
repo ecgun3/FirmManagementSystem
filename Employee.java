@@ -2,47 +2,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/*Functions
- * getEmployeeID()
- * setEmployeeID()
- * 
- * getUsername()
- * setUsername()
- * 
- * getPassword()
- * setPassword()
- * 
- * isDefaultPassword()
- * 
- * getRole()
- * setRole()
- * 
- * getName()
- * setName()
- * 
- * getSurname()
- * setSurname()
- * 
- * getPhoneNo()
- * setPhoneNo()
- * 
- * getDateOfBirth()
- * setDateOfBirth()
- * 
- * getDateOfStart()
- * setDateOfStart(Date dateOfStart)
- * 
- * getEmail()
- * setEmail(String email)
- * 
- * displayProfile();
- * updateProfile(String newEmail, String newPhoneNumber);
- * 
- * isValidEmail(String email)
- * logAction(String action)
- */
-
-//Çalışan türlerinin temel sınıfı --> Abstract
 public abstract class Employee {
 
     //Information of Employees
@@ -184,8 +143,6 @@ public abstract class Employee {
     }
 
     // Abstract Methods (2 tane)
-
-    //Çalışanın mevcut bilgilerini ekrana yazdırır ve iki seçenek sorar: 1- Profil Güncelle 2- Ana Menüye dön
     protected int displayProfile() {
 
         System.out.printf("%-10s %-15s %-15s %-15s %-15s %-15s %-15s %-15s %-20s\n", 
@@ -211,18 +168,17 @@ public abstract class Employee {
         return choice;
     }
 
-    //Kullanıcıdan hangi alanın güncelleneceğini seçmesini ister
     public void updateProfile() {
 
         scan = new Scanner(System.in);
         Database database = new Database();
         database.connectDatabase();
 
-        boolean flag=true; //Kullanıcı dpğru seçim yapana kadar döngü devam ettiren flag
-        String column = ""; //Kullanıcının güncellemek istediği veritabanı sütununu tutacak değişken
-        String value = ""; //Kullanıcının girdiği yeni değeri tutacak değişken
+        boolean flag=true; 
+        String column = ""; 
+        String value = ""; 
 
-        while(flag){ //Kullanıcı doğru bir seçim yapana kadar döner --> Flag ture ise kullanıcı yanlış seçim yaptı
+        while(flag){ 
             System.out.println("Enter the column to update(password, phoneNo, and e-mail)");
             System.out.println("Select a role to display employees:");
             System.out.println("1. Password");
@@ -232,9 +188,9 @@ public abstract class Employee {
 
             int choice = Manager.getValidInt();
                 switch(choice) {
-                    case 1: //column değişkeni password, kullanıcı yeni şifre girer
+                    case 1: 
                         column = "password";
-                        flag=false; //Döngüyü sonlandırmak için
+                        flag=false; 
                         System.out.println("Enter the new value for " + column);
                         value = setPasswordFirstTime();
                         break;
@@ -252,7 +208,7 @@ public abstract class Employee {
                         while(true){
                             value = scan.nextLine();
 
-                            //regex expression: E-posta adresinin belli bir desene uyup uymadğıı
+                            
                             if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
                                 break;
                             else
@@ -265,7 +221,7 @@ public abstract class Employee {
                 }
         }
 
-        //this --> mevcut nesne: Çağrıyı yapan nesne (Güncellenmesi gereken çalışan
+        
         database.updateEmployee(this, column, value);
         System.out.println("Profile updated successfully!");
     }
@@ -371,11 +327,11 @@ public abstract class Employee {
     protected String phoneCheck(){
 
         Database database = new Database();
-        database.connectDatabase(); //Veritabanına bağlantı
-        ArrayList<Employee> employees=database.getEmployees(); //tüm çalışan bilgilerini ArrayList olarak döndürür
-        String phoneNo = ""; //Kullanıcıdan alınacak no bilgilerini tutmak için boş Strign
+        database.connectDatabase(); 
+        ArrayList<Employee> employees=database.getEmployees(); 
+        String phoneNo = ""; 
         boolean success = true;
-        while(success){ //success true olduğu sürece çalışır--> Numara 10 haneli değilse ve başkasında varsa success olur
+        while(success){ 
             success=true; //Bu kısım silinmeli!!
             System.out.print("Phone Number: ");
             phoneNo = scan.nextLine();
@@ -384,7 +340,7 @@ public abstract class Employee {
                     System.out.println("This phone number is belong to someone else. Please enter different phone number!");
                     break;
                 }
-                else if(!phoneNo.matches("\\d{10}")){ //10 haneli bir rakam dizisi değilse
+                else if(!phoneNo.matches("\\d{10}")){ 
                     System.out.println("This phone number is not correct. Please enter 10 digit phone number!");   
                     break;
                 }
@@ -393,13 +349,10 @@ public abstract class Employee {
             }
         }
 
-        //Employees listesini boşaltır
         employees=null;
 
-        //Database bağlantısını kaldırır
         database.disconnectDatabase();
 
-        //Telefon numarasını döndürür
         return phoneNo;
     }
 

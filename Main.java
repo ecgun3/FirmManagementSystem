@@ -16,13 +16,14 @@ public class Main {
     public static void main(String[] args) {
         while(true){
             clearConsole();
-            displayWelcome();
             displayLoginScreen();// Display the login screen
             login();//Login the system
         }
     }
-    public static void displayWelcome(){
+
+    public static void displayLoginScreen(){
         System.out.println(ANSI_PURPLE);
+
         String message=("____    __    ____  _______  __        ______   ______   .___  ___.  _______    \n" + //
                         "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   \n" + //
                         " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      \n" + //
@@ -33,23 +34,25 @@ public class Main {
                         "                                                                                \n" + //
                         "                                                                                \n" + //
                         "                                                                                ");
+
         String[] lines=message.split("\n");//'/n' karakteri sınırlayıcı görev görüyor
 
         for (String line:lines){//her line için sağ karaktere geçmesi için loop
             System.out.println(" "+line);
+
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
-    }
-    public static void displayLoginScreen() {
 
         System.out.println("Access the System: Login Required");
         System.out.println(ANSI_CYAN);
         
     }
+
 
     public static void login (){
 
@@ -83,21 +86,33 @@ public class Main {
                     if(isValid){
                         employee = auth.getEmployee();
                         String role = employee.getRole();
-                        System.out.println("You are directed to the " + role + " menu");
-
-                        try {//upper string will appear for two seconds after that the console will be cleared
-                            Thread.sleep(2000);
-                            clearConsole();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
 
                         auth.disconnect();
 
-                        if(role.equalsIgnoreCase("manager"))
+                        if(role.equalsIgnoreCase("manager")){
+                            System.out.println("You are directed to the Manager Menu");
+
+                            try {//upper string will appear for two seconds after that the console will be cleared
+                                Thread.sleep(1200);
+                                clearConsole();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
                             ((Manager) employee).managerMenu();
-                        else
+                        }
+                        else{
+                            System.out.println("You are directed to the Regular Menu");
+
+                            try {//upper string will appear for two seconds after that the console will be cleared
+                                Thread.sleep(1200);
+                                clearConsole();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
                             ((RegularEmployee) employee).RegularMenu();
+                        }
                     }
                     isLoggedin=true;
 

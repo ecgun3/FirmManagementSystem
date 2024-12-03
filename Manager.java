@@ -3,9 +3,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Random;
-import java.util.*;
-import java.util.Arrays;
 
 
 public class Manager extends Employee{
@@ -213,7 +210,23 @@ public class Manager extends Employee{
         String username = "";
         while(flag){
             boolean success=true;
-            username = scan.nextLine();
+            /* max 45 karakter kontrolü */
+            while (true) 
+            {
+                System.out.print("Bir metin girin (maksimum 45 karakter): ");
+                username = scan.nextLine();
+
+                if (username.length() <= 45) 
+                {
+                    break; // Exit the loop if the user entered valid input
+                } 
+                else 
+                {
+                    System.out.println("Error: The text you entered is more than 45 characters. Please enter another username.");
+                }
+            }
+            /* max 45 karakter kontrolü */
+
             for(Employee employee : employees){
                 if(employee.getUsername().equals(username)){
                     System.out.println("This username already taken. Please enter another username!");
@@ -240,10 +253,10 @@ public class Manager extends Employee{
         String defaultPassword = "password123";
 
         System.out.print("Name: ");
-        String name = scan.nextLine();
+        String name = scan.nextLine();//////////////////////////////////////////45 karakter
 
         System.out.print("Surname: ");
-        String surname = scan.nextLine();
+        String surname = scan.nextLine();//////////////////////////////////////////45 karakter
 
         String phoneNo = phoneCheck();
 
@@ -370,7 +383,7 @@ public class Manager extends Employee{
 
             System.out.println("Enter the username for the update operation:");
             System.out.println("Username: ");
-            String username = scan.nextLine();
+            String username = scan.nextLine();//////////////////////////////////////////45 karakter usernameCheck çağır
 
             Employee employeetoupdate = database.getEmployeeUsername(username);
 
@@ -397,12 +410,12 @@ public class Manager extends Employee{
                     case 2:
                         column = "name";
                         System.out.printf("%nEnter the new value for " + column);
-                        value = scan.nextLine();
+                        value = scan.nextLine();//////////////////////// 45 karakter, sadece alfabetik, ilk harf büyük
                         break;
                     case 3:
                         column = "surname";
                         System.out.printf("%nEnter the new value for " + column);
-                        value = scan.nextLine();
+                        value = scan.nextLine();//////////////////////// 45 karakter, sadece alfabetik, ilk harf büyük
                         break;
                     case 4:
                         column = "role";
@@ -487,12 +500,79 @@ public class Manager extends Employee{
         return validInput;
     }
 
-    ///////////////////////Algorithms eklendi///////////////////////
-    public static void algorithms()
+    // Checks if characters are alphabetic, length of the input and converts the input as required format 
+    public static String nameSurnameCheck(String nameOrSurname) {
+        Scanner scan = new Scanner(System.in);
+        String input;
+    
+        while (true) 
+        {
+            System.out.print("Enter " + nameOrSurname + " (Alphabetical, max 45 characters): ");
+            input = scan.nextLine().trim();
+    
+            // Check for length and whether all characters are alphabetical
+            if (input.length() <= 45 && isAlpha(input)) 
+            {
+                // Convert all characters to lowercase
+                char[] chars = input.toCharArray();
+                for (int i = 0; i < chars.length; i++) 
+                {
+                    chars[i] = Character.toLowerCase(chars[i]);
+                }
+                // Capitalize the first character
+                chars[0] = Character.toUpperCase(chars[0]);
+                input = new String(chars);
+    
+                break;
+            } 
+            else 
+            {
+                System.out.println("Invalid input. Please enter only alphabetical characters (max 45 characters).");
+            }
+        }
+    
+        return input;
+    }
+    
+    // Method to check if a string contains only alphabetic characters
+    public static boolean isAlpha(String str) 
     {
-        runAlgorithms();
+        for (char c : str.toCharArray()) 
+        {
+            if (!Character.isLetter(c)) // Turkish character check
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
+    public static String ValidCheck() // Checks if input has more than 45 character
+    {
+        Scanner scan = new Scanner(System.in);
+        String username;
+
+        while (true) 
+        {
+            System.out.print("Enter a username (maximum 45 characters): ");
+            username = scan.nextLine();
+
+            if (username.length() <= 45) 
+            {
+                break; // Exit the loop if the user entered valid input
+            } 
+            else 
+            {
+                System.out.println("Error: The text you entered is more than 45 characters. Please enter another username.");
+            }
+        }
+
+        return username;
+    }
+
+
+    ///////////////////////Algorithms eklendi///////////////////////
+    
     public static void radixSort(int[] arr) {
         if (arr == null || arr.length == 0) 
         {
@@ -721,7 +801,7 @@ public class Manager extends Employee{
         return Arrays.equals(sortedArr, javaSortArr);
     }
 
-    public static void runAlgorithms()
+    public static void algorithms()
     {
         int size = 0;
         Scanner input = new Scanner(System.in);
@@ -806,5 +886,6 @@ public class Manager extends Employee{
         System.out.println("Heap Sort: " + heapTime + " ns");
         System.out.println("Insertion Sort: " + insertionTime + " ns");
 
+        //return menu
     }
 }

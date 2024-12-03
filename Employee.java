@@ -217,7 +217,7 @@ public abstract class Employee {
                         this.email=value;
                         break;
                     default:
-                        break;
+                        System.out.println("\n===Invalid choice. Please select only from the menu options.===\n");
                 }
         }
 

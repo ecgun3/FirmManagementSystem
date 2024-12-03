@@ -10,9 +10,9 @@ public class Database{
 
     private final String url = "jdbc:mysql://localhost:3306/employee_database";
     private final String username = "root";
-    private final String password = "1234";
+    private final String password = "1632";
 
-    private Connection connection;gg
+    private Connection connection; 
 
     public void connectDatabase(){
 
@@ -22,6 +22,7 @@ public class Database{
         catch(SQLException sqlException){
             sqlException.printStackTrace();
         }
+
     }
 
     public ResultSet executeQuery(String query){
@@ -51,7 +52,7 @@ public class Database{
     public ArrayList<Employee> getEmployees(){
 
         ArrayList<Employee> employees = new ArrayList<Employee>();
-        String query = "SELECT * FROM employees";
+        String query = "SELECT * FROM employee";
 
         try{
 
@@ -67,15 +68,15 @@ public class Database{
                 else
                     employee = new RegularEmployee();
 
-                employee.setID(rs.getInt("employee_ID"));
+                employee.setEmployeeID(rs.getInt("employee_ID"));
                 employee.setUsername(rs.getString("username"));
                 employee.setPassword(rs.getString("password"));
                 employee.setName(rs.getString("name"));
                 employee.setSurname(rs.getString("surname"));
-                employee.setPhone(rs.getString("phone_no"));
+                employee.setPhoneNo(rs.getString("phone_no"));
                 employee.setEmail(rs.getString("email"));
-                employee.setBirth(rs.getDate("date_of_birth"));
-                employee.setStart(rs.getDate("date_of_start"));
+                employee.setDateOfBirth(rs.getDate("date_of_birth"));
+                employee.setDateOfStart(rs.getDate("date_of_start"));
                 employee.setRole(rs.getString("role"));
                 employees.add(employee);
             }
@@ -90,7 +91,7 @@ public class Database{
     public ArrayList<Employee> getEmployeesRole(String role){
 
         ArrayList<Employee> employees = new ArrayList<Employee>();
-        String query = "SELECT * FROM employees";
+        String query = "SELECT * FROM employee";
 
         try{
 
@@ -106,15 +107,15 @@ public class Database{
 
                 if(role.equalsIgnoreCase(rs.getString("role"))){
                     employee.setRole(rs.getString("role"));
-                    employee.setID(rs.getInt("employee_ID"));
+                    employee.setEmployeeID(rs.getInt("employee_ID"));
                     employee.setUsername(rs.getString("username"));
                     employee.setPassword(rs.getString("password"));
                     employee.setName(rs.getString("name"));
                     employee.setSurname(rs.getString("surname"));
-                    employee.setPhone(rs.getString("phone_no"));
+                    employee.setPhoneNo(rs.getString("phone_no"));
                     employee.setEmail(rs.getString("email"));
-                    employee.setBirth(rs.getDate("date_of_birth"));
-                    employee.setStart(rs.getDate("date_of_start"));
+                    employee.setDateOfBirth(rs.getDate("date_of_birth"));
+                    employee.setDateOfStart(rs.getDate("date_of_start"));
                     employees.add(employee);
                 }
 
@@ -129,35 +130,35 @@ public class Database{
 
     public Employee getEmployeeUsername(String username){
 
-        String query = "SELECT * FROM employees WHERE username = ?";
+        username = "'" + username + "'";
+        String query = "SELECT * FROM employee WHERE username = " + username;
+        Employee employee;
 
-        try(PreparedStatement pStatement = connection.prepareStatement(query)){
+        try{
 
-            pStatement.setString(1, username);
-            ResultSet rs = pStatement.executeQuery(query);
+            ResultSet rs = executeQuery(query);
 
             if(rs.next()){
 
-                Employee employee;
                 if(rs.getString("role").equalsIgnoreCase("manager"))
                     employee = new Manager();
                 else
                     employee = new RegularEmployee();                    
                     
                     employee.setRole(rs.getString("role"));
-                    employee.setID(rs.getInt("employee_ID"));
+                    employee.setEmployeeID(rs.getInt("employee_ID"));
                     employee.setUsername(rs.getString("username"));
                     employee.setPassword(rs.getString("password"));
                     employee.setName(rs.getString("name"));
                     employee.setSurname(rs.getString("surname"));
-                    employee.setPhone(rs.getString("phone_no"));
+                    employee.setPhoneNo(rs.getString("phone_no"));
                     employee.setEmail(rs.getString("email"));
-                    employee.setBirth(rs.getDate("date_of_birth"));
-                    employee.setStart(rs.getDate("date_of_start"));
-
+                    employee.setDateOfBirth(rs.getDate("date_of_birth"));
+                    employee.setDateOfStart(rs.getDate("date_of_start"));
+                    
                 return employee;
             }
-            else 
+            else
                 return null;
 
         }
@@ -170,13 +171,8 @@ public class Database{
 
     public void insertEmployee(Employee employee){
 
-        String query = "INSERT INTO employee_database.employee (username, password, name, surname, phone_no, email, date_of_birth" + 
+        String query = "INSERT INTO employee (username, password, name, surname, phone_no, email, date_of_birth" + 
         ", date_of_start, role) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ?)";
-
-        // String query = "INSERT INTO employee_database.employee (employee_ID, username, password, name, surname, phone_no, email, date_of_birth" + 
-        //     ", date_of_start, role)VALUES ('" +  employee.getID() + "', '" + employee.getUsername() + "', '" + 
-        //     employee.getPassword() + "', '" + employee.getName() + "', '" + employee.getSurname() + "', '" + employee.getPhone() + "', '" +
-        //     employee.getEmail() + "', '" + employee.getBirth() + "', '" + employee.getStart() + "', '" + employee.getRole() + "') ";
 
         try(PreparedStatement pStatement = connection.prepareStatement(query)){
             
@@ -184,13 +180,13 @@ public class Database{
             pStatement.setString(2,employee.getPassword());
             pStatement.setString(3,employee.getName());
             pStatement.setString(4,employee.getSurname());
-            pStatement.setString(5,employee.getPhone());
+            pStatement.setString(5,employee.getPhoneNo());
             pStatement.setString(6,employee.getEmail());
-            pStatement.setDate(7,employee.getBirth());
-            pStatement.setDate(8,employee.getStart());
+            pStatement.setDate(7,employee.getDateOfBirth());
+            pStatement.setDate(8,employee.getDateOfStart());
             pStatement.setString(9,employee.getRole());
 
-            if (pStatement.executeUpdate(query) > 0)
+            if (pStatement.executeUpdate() > 0)
                 System.out.println("Employee inserted successfully!");
             else
                 System.out.println("Insert failed!");
@@ -202,8 +198,8 @@ public class Database{
 
     public void updateEmployee(Employee employee, String column, String value){
 
-        int ID = employee.getID();
-        String query = "UPDATE employee_database.employee SET " + column + " = ? WHERE employee_ID = ? ";
+        int ID = employee.getEmployeeID();
+        String query = "UPDATE employee SET " + column + " = ? WHERE employee_ID = ? ";
         try(PreparedStatement pStatement = connection.prepareStatement(query);){
 
             pStatement.setString(1, value);
@@ -220,10 +216,28 @@ public class Database{
         }
     }
 
+    public boolean uniqueness(String column, String value){
+
+        String query = "SELECT EXISTS (SELECT 1 FROM employee WHERE " + column +  " = ?)";
+        try(PreparedStatement pStatement = connection.prepareStatement(query);){
+
+            ResultSet rs = pStatement.executeQuery();
+            pStatement.setString(1, value);
+
+            if (rs.next())
+                return !rs.getBoolean(1);
+
+        }
+        catch(SQLException sqlException){
+            sqlException.printStackTrace();
+        }
+        return false;
+    }
+
     public void deleteEmployee(Employee employee){
 
-        int ID = employee.getID();
-        String query = "DELETE FROM employee_database.employee WHERE employee_ID = ?";
+        int ID = employee.getEmployeeID();
+        String query = "DELETE FROM employee WHERE employee_ID = ?";
         try(PreparedStatement pStatement = connection.prepareStatement(query)){
             pStatement.setInt(1, ID);
             if (pStatement.executeUpdate() > 0)
@@ -247,6 +261,11 @@ public class Database{
         catch(SQLException sqlException){
         }
     }
-
     
+
 }
+// SELECT * FROM employee_database.employee
+// DELETE FROM employee WHERE employee_ID>1
+// INSERT INTO employee_database.employee (username,password,name,surname,phone_no,email,date_of_birth,date_of_start,role) VALUES ('Murat123','1234','Murat','Yılmaz','05543364895','mrt@gmail.com','2001.12.98','2002.06.23','manager')
+
+// ALTER TABLE employee AUTO_INCREMENT = 1;

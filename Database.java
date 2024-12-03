@@ -12,7 +12,7 @@ public class Database{
     private final String username = "root";
     private final String password = "1234";
 
-    private Connection connection; 
+    private Connection connection;gg
 
     public void connectDatabase(){
 

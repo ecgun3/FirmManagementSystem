@@ -15,7 +15,7 @@ public abstract class Employee {
     protected Date dateOfBirth;
     protected Date dateOfStart;
     protected String email;
-    private Scanner scan = new Scanner(System.in);
+    private Scanner scan = new Scanner(System.in,"UTF-8");
 
     // Constructor
 
@@ -182,7 +182,11 @@ public abstract class Employee {
                     column = "phoneNo";
                     flag=false;
                     System.out.println("Enter the new value for " + column);
-                    value =checkPhoneAndUsername("phone_no");
+                    value = "(" + countryCode() + ") ";
+                    System.out.print("Phone Number: ");
+                    String temp = checkPhoneAndUsername("phone_no");
+                    value = value + temp.substring(0,3) + " " + temp.substring(3, 6) + 
+                                " " + temp.substring(6, 8) + " " + temp.substring(8, 10);
                     this.phoneNo=value;
                     break;
                 case 3:
@@ -191,7 +195,7 @@ public abstract class Employee {
                     System.out.println("Enter the new value for " + column);
                     while(true){
                         value = validString();
-                        if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
+                        if(value.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
                             break;
                         else
                             System.out.println("Please enter a proper email!: ");
@@ -314,7 +318,7 @@ public abstract class Employee {
 
         while(flag){
             value = validString();
-            if("phone_no".equals(column) && !phoneNo.matches("\\d{10}"))
+            if("phone_no".equals(column) && !value.matches("\\d{10}"))
                 System.out.println("This phone number is not correct. Please enter 10 digit phone number!");
             else{
                 if(!database.uniqueness(column, value)){
@@ -331,7 +335,7 @@ public abstract class Employee {
             }
         }
         
-        return username;
+        return value;
     } 
 
     public String countryCode(){
@@ -339,7 +343,7 @@ public abstract class Employee {
         String countryCode = "";
     
         //different countries 
-        System.out.println("Lütfen bir ülke seçiniz:");
+        System.out.println("%nPlease Choose Your Phone Code:");
         System.out.println("1 - USA (+1)");
         System.out.println("2 - England (+44)");
         System.out.println("3 - Germany (+49)");
@@ -389,7 +393,7 @@ public abstract class Employee {
             } 
             else 
             {
-                System.out.println("Error: The text you entered is more than 45 characters. Please enter another username.");
+                System.out.println("Error: The text you entered is more than 45 characters.");
             }
         }
 

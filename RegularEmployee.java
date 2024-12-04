@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class RegularEmployee extends Employee {
 
-    Scanner scan = new Scanner(System.in);
+    Scanner scan = new Scanner(System.in,"UTF-8");
 
     // Constructor
 
@@ -34,7 +34,8 @@ public class RegularEmployee extends Employee {
 
             switch (choice) {
                 case 1: 
-                    displayProfile();
+                    if(displayProfile()==1)
+                        updateProfile();
                     returnToMenu();
                     break;
                 case 2 :

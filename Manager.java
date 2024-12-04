@@ -12,7 +12,7 @@ public class Manager extends Employee{
 
     private Database database = new Database();
 
-    private static Scanner scan = new Scanner(System.in);
+    private static Scanner scan = new Scanner(System.in,"UTF-8");
 
     public Manager(){
         super();
@@ -45,7 +45,7 @@ public class Manager extends Employee{
 
         switch(choice) {
             case 1:
-                if(displayProfile()==1);
+                if(displayProfile()==1)
                     updateProfile();
                 break;
             case 2: 
@@ -177,9 +177,11 @@ public class Manager extends Employee{
         System.out.print("Surname: ");
         String surname = nameSurnameCheck();
 
-        String phoneNo = countryCode() + " ";
-        System.out.print("Phone No: ");
-        phoneNo = phoneNo + checkPhoneAndUsername("phone_no");//stringin 3 3 2 2 bölcek!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String phoneNo = "(" + countryCode() + ") ";
+        String temp = checkPhoneAndUsername("phone_no");
+        System.out.print("Phone Number: ");
+        phoneNo = phoneNo + temp.substring(0,3) + " " + temp.substring(3, 6) + 
+                    " " + temp.substring(6, 8) + " " + temp.substring(8, 10);
 
         //Valid email: ece.gunaydin@example.com
         //Invalid email: ece.gunaydin@com
@@ -404,7 +406,7 @@ public class Manager extends Employee{
     private String Date(){
 
         String date = "";
-        String properDate = "yyyy-mm-dd";
+        String properDate = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(properDate);
         sdf.setLenient(false);
 
@@ -414,8 +416,15 @@ public class Manager extends Employee{
             System.out.println("Please enter an appropriate date(YYYY-MM-DD): ");
             date = validString();
             try{
+
                 sdf.parse(date);
-                flag = false;
+                String yearString = date.substring(0, 4);
+                int year = Integer.parseInt(yearString);
+                if(year<1900)
+                    System.out.println("Year must be greater than 1900. Please try again.");
+                else
+                    flag = false;
+
             }
             catch(ParseException exception){
             }

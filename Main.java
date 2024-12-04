@@ -5,7 +5,7 @@ public class Main {
 
     public static final String ANSI_PURPLE = "\u001B[35m";//ANSI codes for colors used for coloring the ASCII
     public static final String ANSI_CYAN = "\u001B[36m"; //Returns to the default color property
-    public static Scanner input = new Scanner(System.in); 
+    public static Scanner input = new Scanner(System.in,"UTF-8"); 
 
 
     public static void clearConsole(){      //Cleaning Console

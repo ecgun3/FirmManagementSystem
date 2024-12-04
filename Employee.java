@@ -1,7 +1,7 @@
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Scanner;
 
+//Çalışan türlerinin temel sınıfı --> Abstract
 public abstract class Employee {
 
     //Information of Employees
@@ -18,7 +18,7 @@ public abstract class Employee {
     protected Date dateOfBirth;
     protected Date dateOfStart;
 
-    private Scanner scan = new Scanner(System.in);
+    private Scanner scan = new Scanner(System.in,"UTF-8");
 
     // Constructor
 
@@ -92,7 +92,6 @@ public abstract class Employee {
         return name;
     }
 
-    //set etmeli mi
     public void setName(String name) {
         this.name = name;
     }
@@ -143,23 +142,25 @@ public abstract class Employee {
     }
 
     // Abstract Methods (2 tane)
-    protected int displayProfile() {
 
-        System.out.printf("%-10s %-15s %-15s %-15s %-15s %-15s %-15s %-15s %-20s\n", 
-            "ID", "Username", "Role", "Name", "Surname", "Phone", "Email", "Birth Date", "Start Date");
-    
-        System.out.printf("%-10d %-15s %-15s %-15s %-15s %-15s %-20s %-20s %-15s\n", 
-                this.employeeID, this.username, this.role, this.name, this.surname, this.phoneNo, this.email, this.dateOfBirth, this.role);
-    
+    //Çalışanın mevcut bilgilerini ekrana yazdırır ve iki seçenek sorar: 1- Profil Güncelle 2- Ana Menüye dön
+    protected int displayProfile(){
+
+        System.out.printf("%-10s %-15s %-15s %-15s %-15s %-15s %-30s %-20s %-15s\n",
+                "ID", "Username", "Role", "Name", "Surname", "Phone", "Email", "Birth Date", "Start Date");
+
+        System.out.printf("%-10d %-15s %-15s %-15s %-15s %-15s %-30s %-20s %-15s\n",
+                this.employeeID, this.username, this.role, this.name, this.surname, this.phoneNo, this.email, this.dateOfBirth, this.dateOfStart);
+
         System.out.println("1. Change Profile Informations");
         System.out.println("2. Return Main Menu");
         int choice=0;
         while(choice != 1 && choice != 2) {
             while(!scan.hasNextInt()){
                 System.out.printf("%nInvalid input. Please enter an integer (1, 2).%n Make a choice: ");
-                scan.next(); // skip the invalid input 
+                scan.next(); // skip the invalid input
             }
-            choice = scan.nextInt();
+            choice = getValidInt();
 
             if(choice != 1 && choice != 2)
                 System.out.printf("%nInvalid input. Please enter an integer (1, 2).%n Make a choice: ");
@@ -168,9 +169,9 @@ public abstract class Employee {
         return choice;
     }
 
+    //Kullanıcıdan hangi alanın güncelleneceğini seçmesini ister
     public void updateProfile() {
 
-        scan = new Scanner(System.in);
         Database database = new Database();
         database.connectDatabase();
 
@@ -179,14 +180,14 @@ public abstract class Employee {
         String value = ""; 
 
         while(flag){ 
-            System.out.println("Enter the column to update(password, phoneNo, and e-mail)");
-            System.out.println("Select a role to display employees:");
+            System.out.println("Select an entity to update:");
             System.out.println("1. Password");
             System.out.println("2. Phone Number");
             System.out.println("3. E-mail");
-            System.out.print("Choose a column from menu: ");
+            System.out.println("4. Return to Profile Information Menu");
+            System.out.print("Choose an entity from menu: ");
 
-            int choice = Manager.getValidInt();
+            int choice = getValidInt();
                 switch(choice) {
                     case 1: 
                         column = "password";
@@ -195,10 +196,14 @@ public abstract class Employee {
                         value = setPasswordFirstTime();
                         break;
                     case 2:
-                        column = "phoneNo";
+                        column = "phone_no";
                         flag=false;
                         System.out.println("Enter the new value for " + column);
-                        value = phoneCheck();
+                        value = "(" + countryCode() + ") ";
+                        System.out.printf("Phone Number: %s",value);
+                        String temp = checkPhoneAndUsername("phone_no");
+                        value = value + temp.substring(0,3) + " " + temp.substring(3, 6) +
+                                " " + temp.substring(6, 8) + " " + temp.substring(8, 10);
                         this.phoneNo=value;
                         break;
                     case 3:
@@ -206,35 +211,39 @@ public abstract class Employee {
                         flag=false;
                         System.out.println("Enter the new value for " + column);
                         while(true){
-                            value = scan.nextLine();
-
-                            
-                            if(email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
+                            value = validString();
+                            if(value.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
                                 break;
                             else
                                 System.out.println("Please enter a proper email!: ");
                         }
                         this.email=value;
                         break;
+                    case 4:
+                        displayProfile();
+                        flag = false;
+                        break;
                     default:
                         System.out.println("\n===Invalid choice. Please select only from the menu options.===\n");
+                        break;
                 }
         }
 
-        
+       
         database.updateEmployee(this, column, value);
         System.out.println("Profile updated successfully!");
+        Main.clearConsole();
     }
 
     //Helper Methods (4 tane)
 
     //1.
-    public String setPasswordFirstTime(){
+    protected String setPasswordFirstTime(){
         // Şifreyi kontrol et
         String newPassword = "";
         while(true){
             System.out.print("Password: ");
-            newPassword = scan.nextLine();
+            newPassword=validString();
 
             //Calculate password strength
             int score = evaluatePasswordStrenght(newPassword);
@@ -248,9 +257,10 @@ public abstract class Employee {
                 break;
             } else {
                 System.out.println("Please compy with password criteria");
-                System.out.println("Password Criteria:\n-12 characters long\n-Include a mix of: \n\tUppercase\n\tLowercase\n\tNumbers\n\tSpecial Characters\n\tTurkish Characters\n-It must not contain spaces");
+                System.out.println("Password Criteria:\n-8 characters long\n-Include a mix of: \n\tUppercase\n\tLowercase\n\tNumbers\n\tSpecial Characters\n\tTurkish Characters\n-It must not contain spaces");
             }
         }
+        Main.clearConsole();
         return newPassword;
     }
 
@@ -280,7 +290,7 @@ public abstract class Employee {
         int score = 0;
 
         //1.Check for length (12 or more characters)
-        if(password.length() >= 12)
+        if(password.length() >= 8)
             score += 2;
 
         //2.Check for uppercase letters
@@ -324,38 +334,126 @@ public abstract class Employee {
 
 
     //3.Başka çalışanınki ile aynı olmamalı bir de 10 haneli olmalı
-    protected String phoneCheck(){
+    public String checkPhoneAndUsername(String column){
 
         Database database = new Database();
-        database.connectDatabase(); 
-        ArrayList<Employee> employees=database.getEmployees(); 
-        String phoneNo = ""; 
-        boolean success = true;
-        while(success){ 
-            success=true; //Bu kısım silinmeli!!
-            System.out.print("Phone Number: ");
-            phoneNo = scan.nextLine();
-            for(Employee employee : employees){
-                if(employee.getPhoneNo().equals(phoneNo)){
-                    System.out.println("This phone number is belong to someone else. Please enter different phone number!");
-                    break;
-                }
-                else if(!phoneNo.matches("\\d{10}")){ 
-                    System.out.println("This phone number is not correct. Please enter 10 digit phone number!");   
-                    break;
+        database.connectDatabase();
+        boolean flag=true;
+        String value = "";
+
+        while(flag){
+            value = validString();
+            if("phone_no".equals(column) && !value.matches("\\d{10}"))
+                System.out.println("This phone number is not correct. Please enter 10 digit phone number!");
+            else if("username".equals(column) && (value.contains(" ") || value.contains("\t") ) ){
+                    System.out.println("Username cannot contain space or tab character.");
+            }
+            else{
+                if(!database.uniqueness(column, value)){
+                    if("username".equals(column)){
+                        System.out.println("This username already taken. Please enter another username!");
+                        System.out.print("Username: ");
+                    }
+                    else if ("phone_no".equals(column)){
+                        System.out.println("This phone number is belong to someone else. Please enter different phone number!");
+                    }
                 }
                 else
-                    success = false;
+                    flag=false;
+            }
+        }
+        Main.clearConsole();
+        return value;
+    }
+
+
+    public String countryCode(){
+
+        String countryCode = "";
+
+        //different countries
+        System.out.println("%nPlease Choose Your Phone Code:");
+        System.out.println("1 - USA (+1)");
+        System.out.println("2 - England (+44)");
+        System.out.println("3 - Germany (+49)");
+        System.out.println("4 - Türkiye (+90)");
+        System.out.println("5 - India (+91)");
+
+        //country choice
+        while (true) {
+            System.out.print("Your choice: ");
+            int choice = getValidInt();
+            switch (choice) {
+                case 1:
+                    countryCode = "+1";
+                    break;
+                case 2:
+                    countryCode = "+44";
+                    break;
+                case 3:
+                    countryCode = "+49";
+                    break;
+                case 4:
+                    countryCode = "+90";
+                    break;
+                case 5:
+                    countryCode = "+91";
+                    break;
+                default:
+                    System.out.println("Invalid selection. Please select from 1 to 5.");
+                    continue;
+            }
+            break;
+        }
+
+        Main.clearConsole();
+        return countryCode;
+    }
+
+    public String validString() {
+
+        String str;
+        while (true)
+        {
+            str = scan.nextLine();
+
+            if(str.equals("x") || str.equals("X"))
+                return str;
+            else {
+                if (str.equals(" ") || str.equals("\t"))
+                    System.out.println("Input cannot be space or tab character");
+                else {
+                    if (str.length() <= 45 && str.length() > 1)
+                        break; // Exit the loop if the user entered valid input
+                    else
+                        System.out.println("Error: Please enter proper format (and max 45 characters");
+                }
             }
         }
 
-        employees=null;
-
-        database.disconnectDatabase();
-
-        return phoneNo;
+        return str;
     }
 
+
+    public int getValidInt() {
+
+        int validInput = 0;
+
+        while (true) {
+            if (scan.hasNextInt()) {
+                validInput = scan.nextInt();
+                scan.nextLine();
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                scan.nextLine();
+            }
+        }
+
+        return validInput;
+    }
+
+    /*
     //Prints the action and the user to console
     //4.Bir çalışanın gerçekleştirdiği eylemi ve zamanı günlük olarak kaydeder.
     public void logAction(String action) {
@@ -366,5 +464,7 @@ public abstract class Employee {
     //LOG: Profile updated by ece_g at Mon Dec 02 14:32:47 IST 2024
 
     //The reason behind that method is saving the action on the diary
-    //Trace the actions , time and the user 
+    //Trace the actions , time and the user
+
+     */
 }

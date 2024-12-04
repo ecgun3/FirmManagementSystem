@@ -111,7 +111,7 @@ public class Main {
         String username;
 
         while(!isLoggedin){
-
+            clearConsole();
             System.out.print("Enter username: ");
             username = scanner.nextLine();
             if(auth.authenticateUsername(username)){//if the username is valid

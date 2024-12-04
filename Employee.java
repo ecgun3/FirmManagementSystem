@@ -164,7 +164,7 @@ public abstract class Employee {
 
         while(flag){
         System.out.println("Enter the column to update(password, phoneNo, and e-mail)");
-        System.out.println("Select a role to display employees:");
+        System.out.println("Select a role to display employees: ");
         System.out.println("1. Password");
         System.out.println("2. Phone Number");
         System.out.println("3. E-mail");
@@ -234,7 +234,7 @@ public abstract class Employee {
                 break;
             } else {
                 System.out.println("Please compy with password criteria");
-                System.out.println("Password Criteria:\n-12 characters long\n-Include a mix of: \n\tUppercase\n\tLowercase\n\tNumbers\n\tSpecial Characters\n\tTurkish Characters\n-It must not contain spaces");
+                System.out.println("Password Criteria:\n-8 characters long\n-Include a mix of: \n\tUppercase\n\tLowercase\n\tNumbers\n\tSpecial Characters\n\tTurkish Characters\n-It must not contain spaces");
             }
         }
         return newPassword;
@@ -265,8 +265,8 @@ public abstract class Employee {
     public int evaluatePasswordStrenght(String password) {
         int score = 0;
 
-        //1.Check for length (12 or more characters)
-        if(password.length() >= 12)
+        //1.Check for length (8 or more characters)
+        if(password.length() >= 8)
             score += 2;
 
         //2.Check for uppercase letters

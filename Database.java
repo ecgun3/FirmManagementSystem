@@ -10,7 +10,7 @@ public class Database{
 
     private final String url = "jdbc:mysql://localhost:3306/employee_database";
     private final String username = "root";
-    private final String password = "1632";
+    private final String password = "12345678";
 
     private Connection connection; 
 

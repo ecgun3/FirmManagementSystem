@@ -151,7 +151,7 @@ public class Manager extends Employee{
                 employees.add(employee);
                 displayEmployeeDetails(employees); 
             } else {
-                System.out.println("No employee found with :" + username);
+                System.out.println("No employee found with " + username);
             }
         }catch (Exception e) {
             System.err.println("An error occurred while displaying employees by username.");
@@ -164,7 +164,7 @@ public class Manager extends Employee{
     //yeni employee girişi exception lazım
     private void hireEmployee(){
 
-        System.out.println("Enter new employee information:");
+        System.out.println("Enter new employee information: ");
 
         System.out.print("username: ");
         String username = checkPhoneAndUsername("username");
@@ -214,10 +214,10 @@ public class Manager extends Employee{
         Employee hire;
 
         if (role.equalsIgnoreCase("Manager")) {
-            hire = new Manager(0, username, defaultPassword, name, surname, phoneNo, email, date1, date2, role);
+            hire = new Manager(0, username, defaultPassword, role, name, surname, phoneNo, date1, date2, email);
         }
         else {
-            hire = new RegularEmployee(0, username, defaultPassword, name, surname, phoneNo, email, date1, date2, role);
+            hire = new RegularEmployee(0, username, defaultPassword, role, name, surname, phoneNo, date1, date2, email);
         }
 
         database.connectDatabase();
@@ -237,15 +237,18 @@ public class Manager extends Employee{
                 System.out.printf("Enter the username for the delete operation: ");
                 username = validString();
                 //menajerin kendisini silememesi için
-                if (this.username == username) {
+                boolean flag2=true;
+                if (this.username.equals(username)) {
                     System.out.println("You cannot delete your own account.");
-                    while(true){
+                    while(flag2){
                         System.out.println("If you want to delete another employee press 1, or back to main menu press 2");
                         int choice = getValidInt();
                         switch(choice){
                             case 1:
+                            flag2=false;
                                 continue;
                             case 2:
+                            flag=false;
                                 break;
                             default:
                                 System.out.println("Invalid choice!");
@@ -263,7 +266,7 @@ public class Manager extends Employee{
                 database.deleteEmployee(employeetodelete);
                 System.out.println("Employee with Username: " + username +" Deleted.");
             }else {
-                System.out.println("employee not found:" + username);
+                System.out.println("employee not found: " + username);
             }
 
         database.disconnectDatabase();
@@ -277,14 +280,14 @@ public class Manager extends Employee{
         
         try{
 
-            System.out.println("Enter the username for the update operation:");
+            System.out.println("Enter the username for the update operation: ");
             System.out.println("Username: ");
             String username = validString();
 
             Employee employeetoupdate = database.getEmployeeUsername(username);
 
             if(employeetoupdate != null){
-                System.out.println("Enter the number of column to update:");
+                System.out.println("Enter the number of column to update: ");
                 System.out.println("1. Username");
                 System.out.println("2. Name");
                 System.out.println("3. Surname");
@@ -302,21 +305,29 @@ public class Manager extends Employee{
                         column = "username";
                         System.out.printf("%nEnter the new value for " + column);
                         value = checkPhoneAndUsername("username");
+                        if(username.equals(this.username))
+                            this.username=value;
                         break;
                     case 2:
                         column = "name";
                         System.out.printf("%nEnter the new value for " + column);
                         value = nameSurnameCheck();
+                        if(username.equals(this.username))
+                            this.name=value;
                         break;
                     case 3:
                         column = "surname";
                         System.out.printf("%nEnter the new value for " + column);
                         value = nameSurnameCheck();
+                        if(username.equals(this.username))
+                            this.surname=value;
                         break;
                     case 4:
                         column = "role";
                         System.out.printf("%nEnter the new value for " + column);
                         value = selectRole();
+                        if(username.equals(this.username))
+                            this.role=value;
                         break;
                     case 5:
                         column = "date_of_birth";
@@ -379,7 +390,7 @@ public class Manager extends Employee{
     private String selectRole() {
     
         //display rolemenu
-        System.out.println("Select a role to display employees:");
+        System.out.println("Select a role to display employees: ");
         System.out.println("1. Manager");
         System.out.println("2. Engineer");
         System.out.println("3. Intern");
@@ -420,15 +431,18 @@ public class Manager extends Employee{
                 sdf.parse(date);
                 String yearString = date.substring(0, 4);
                 int year = Integer.parseInt(yearString);
-                if(year<1900)
-                    System.out.println("Year must be greater than 1900. Please try again.");
+                if(year<1900 || year>2016)
+                    System.out.println("Year must be greater than 1900 or lower than 2016. Please try again.");
                 else
                     flag = false;
 
             }
             catch(ParseException exception){
             }
-            
+            catch(NumberFormatException e){
+                System.out.println("Invalid informat. Please try again.");
+            }
+
         }
         return date;
     }

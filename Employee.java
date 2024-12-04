@@ -372,7 +372,7 @@ public abstract class Employee {
         String countryCode = "";
 
         //different countries
-        System.out.println("%nPlease Choose Your Phone Code:");
+        System.out.println("Please Choose Your Phone Code:");
         System.out.println("1 - USA (+1)");
         System.out.println("2 - England (+44)");
         System.out.println("3 - Germany (+49)");

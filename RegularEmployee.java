@@ -23,7 +23,11 @@ public class RegularEmployee extends Employee {
         int choice = 0;
         while (choice!=3){
             String title = this.name + " " + this.surname;
-            System.out.println(title);
+
+            System.out.print("\u001B[35m");
+            System.out.println(title+"\n");
+            System.out.print("\u001B[36m");
+
             System.out.println("\nRegular Employee Menu");
             System.out.println("=====================");
             System.out.println("1. Display Profile");
@@ -54,7 +58,7 @@ public class RegularEmployee extends Employee {
     }
 
     public void returnToMenu(){
-        System.out.println("Press 'M' to return main menu");
+        System.out.println("Press 'M' to return Regular Menu");
 
         while (true) {
             String input = scan.nextLine();
@@ -63,6 +67,7 @@ public class RegularEmployee extends Employee {
                 RegularMenu();
                 break;
             }
+            
             else
                 System.out.println("Invalid input. Please press 'M' to return to the menu.");
         }

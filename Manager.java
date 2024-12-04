@@ -212,7 +212,7 @@ public class Manager extends Employee{
         Date date2 = Date.valueOf(startdate);
 
         //rol ekleme kısmı
-        System.out.print("Role: ");
+        System.out.println("Role: ");
         String role = null;
         while(role == null){
             role = selectRole();
@@ -343,12 +343,23 @@ public class Manager extends Employee{
                             this.role=value;
                         break;
                     case 5:
-                        column = "date_of_birth";
+                    column = "date_of_birth";
+                    String year1;
+                    do {
                         value = Date();
-                        break;
+                        year1 = value.substring(0,4);
+                    } while (Integer.parseInt(year1)<1900 || Integer.parseInt(year1)>2006);
+                    break;
                     case 6:
                         column = "date_of_start";
-                        value = Date();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String StartYear = sdf.format(employeetoupdate.dateOfBirth);
+                        String year2;
+                        StartYear = value.substring(0,4);
+                        do {
+                            value = Date();
+                            year2 = value.substring(0,4);
+                        } while (Integer.parseInt(year2)<Integer.parseInt(StartYear) || Integer.parseInt(year2)>2024);
                         break;
                     default:
                         System.out.println("Invalid choice! Please enter a number between 1 and 6.");
@@ -410,7 +421,6 @@ public class Manager extends Employee{
     private String selectRole() {
 
         //display rolemenu
-        System.out.println("Select a role to display employees: ");
         System.out.println("1. Manager");
         System.out.println("2. Engineer");
         System.out.println("3. Intern");
@@ -809,23 +819,47 @@ public class Manager extends Employee{
             System.out.println("Radix true");
         else
             System.out.println("Radix wrong");
-
+        
         if(sortCheck(shellArray, array))
             System.out.println("Shell true");
+        else
+            System.out.println("Shell wrong");
 
         if(sortCheck(heapArray, array))
             System.out.println("Heap true");
-
+        else
+            System.out.println("Heap wrong");
+            
         if(sortCheck(insertionArray, array))
             System.out.println("Insertion true");
-
+        else
+            System.out.println("Insertion wrong");
+        
         System.out.println();
+            
+        long[] times = new long[4];
+        String[] algorithms = {"Radix Sort", "Shell Sort", "Heap Sort", "Insertion Sort"};
+
+        times[0] = radixTime;
+        times[1] = shellTime;
+        times[2] = heapTime;
+        times[3] = insertionTime;
+
+        long[] sortedTimes = times.clone();
+        Arrays.sort(sortedTimes);
 
         System.out.println("Execution Times:");
-        System.out.println("Radix Sort: " + radixTime + " ns");
-        System.out.println("Shell Sort: " + shellTime + " ns");
-        System.out.println("Heap Sort: " + heapTime + " ns");
-        System.out.println("Insertion Sort: " + insertionTime + " ns");
+        for(long time : sortedTimes)
+        {
+            for(int i = 0; i < times.length; i++)
+            {
+                if(time == times[i])
+                {
+                    System.out.println(algorithms[i] + ": " + time + " ns");
+                    break;
+                }
+            }
+        }
 
     }
 }

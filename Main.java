@@ -27,6 +27,7 @@ public class Main {
                 break;
 
                 case 2:
+                clearConsole();
                 System.exit(0);
                 break;
                 

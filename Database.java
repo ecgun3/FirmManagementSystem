@@ -10,9 +10,9 @@ public class Database{
 
     private final String url = "jdbc:mysql://localhost:3306/employee_database";
     private final String username = "root";
-    private final String password = "1234";
+    private final String password = "1632";
 
-    private Connection connection;
+    private Connection connection; 
 
     public void connectDatabase(){
 
@@ -62,7 +62,7 @@ public class Database{
 
                 Employee employee;
                 String role = rs.getString("role");
-
+                
                 if(role.equalsIgnoreCase("manager"))
                     employee = new Manager();
                 else
@@ -143,19 +143,19 @@ public class Database{
                 if(rs.getString("role").equalsIgnoreCase("manager"))
                     employee = new Manager();
                 else
-                    employee = new RegularEmployee();
-
-                employee.setRole(rs.getString("role"));
-                employee.setEmployeeID(rs.getInt("employee_ID"));
-                employee.setUsername(rs.getString("username"));
-                employee.setPassword(rs.getString("password"));
-                employee.setName(rs.getString("name"));
-                employee.setSurname(rs.getString("surname"));
-                employee.setPhoneNo(rs.getString("phone_no"));
-                employee.setEmail(rs.getString("email"));
-                employee.setDateOfBirth(rs.getDate("date_of_birth"));
-                employee.setDateOfStart(rs.getDate("date_of_start"));
-
+                    employee = new RegularEmployee();                    
+                    
+                    employee.setRole(rs.getString("role"));
+                    employee.setEmployeeID(rs.getInt("employee_ID"));
+                    employee.setUsername(rs.getString("username"));
+                    employee.setPassword(rs.getString("password"));
+                    employee.setName(rs.getString("name"));
+                    employee.setSurname(rs.getString("surname"));
+                    employee.setPhoneNo(rs.getString("phone_no"));
+                    employee.setEmail(rs.getString("email"));
+                    employee.setDateOfBirth(rs.getDate("date_of_birth"));
+                    employee.setDateOfStart(rs.getDate("date_of_start"));
+                    
                 return employee;
             }
             else
@@ -171,11 +171,11 @@ public class Database{
 
     public void insertEmployee(Employee employee){
 
-        String query = "INSERT INTO employee (username, password, name, surname, phone_no, email, date_of_birth" +
-                ", date_of_start, role) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ?)";
+        String query = "INSERT INTO employee (username, password, name, surname, phone_no, email, date_of_birth" + 
+        ", date_of_start, role) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ?)";
 
         try(PreparedStatement pStatement = connection.prepareStatement(query)){
-
+            
             pStatement.setString(1, employee.getUsername());
             pStatement.setString(2,employee.getPassword());
             pStatement.setString(3,employee.getName());
@@ -225,8 +225,8 @@ public class Database{
 
             try(ResultSet rs = pStatement.executeQuery()){
 
-                if (rs.next())
-                    return !rs.getBoolean(1);
+            if (rs.next())
+                return !rs.getBoolean(1);
             }
 
         }
@@ -263,7 +263,7 @@ public class Database{
         catch(SQLException sqlException){
         }
     }
-
+    
 
 }
 // SELECT * FROM employee_database.employee

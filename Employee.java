@@ -166,6 +166,7 @@ public abstract class Employee {
                 System.out.printf("%nInvalid input. Please enter an integer (1, 2).%n Make a choice: ");
 
         }
+        Main.clearConsole();
         return choice;
     }
 
@@ -191,7 +192,7 @@ public abstract class Employee {
                 switch(choice) {
                     case 1: 
                         column = "password";
-                        flag=false; 
+                        flag=false;
                         System.out.println("Enter the new value for " + column);
                         value = setPasswordFirstTime();
                         break;
@@ -232,7 +233,6 @@ public abstract class Employee {
        
         database.updateEmployee(this, column, value);
         System.out.println("Profile updated successfully!");
-        Main.clearConsole();
     }
 
     //Helper Methods (4 tane)
@@ -243,7 +243,10 @@ public abstract class Employee {
         String newPassword = "";
         while(true){
             System.out.print("Password: ");
-            newPassword=validString();
+            do{
+                System.out.println("You cannot enter same password.");
+                newPassword=validString();
+            }while(newPassword.equals(this.password));
 
             //Calculate password strength
             int score = evaluatePasswordStrenght(newPassword);
@@ -343,6 +346,8 @@ public abstract class Employee {
 
         while(flag){
             value = validString();
+            if(value.equalsIgnoreCase("x"))
+                return value;
             if("phone_no".equals(column) && !value.matches("\\d{10}"))
                 System.out.println("This phone number is not correct. Please enter 10 digit phone number!");
             else if("username".equals(column) && (value.contains(" ") || value.contains("\t") ) ){
@@ -362,7 +367,6 @@ public abstract class Employee {
                     flag=false;
             }
         }
-        Main.clearConsole();
         return value;
     }
 
@@ -372,7 +376,7 @@ public abstract class Employee {
         String countryCode = "";
 
         //different countries
-        System.out.println("%nPlease Choose Your Phone Code:");
+        System.out.println("Please Choose Your Phone Code:");
         System.out.println("1 - USA (+1)");
         System.out.println("2 - England (+44)");
         System.out.println("3 - Germany (+49)");
@@ -406,7 +410,6 @@ public abstract class Employee {
             break;
         }
 
-        Main.clearConsole();
         return countryCode;
     }
 
@@ -426,7 +429,7 @@ public abstract class Employee {
                     if (str.length() <= 45 && str.length() > 1)
                         break; // Exit the loop if the user entered valid input
                     else
-                        System.out.println("Error: Please enter proper format (and max 45 characters");
+                        System.out.println("Error: Please enter proper format (and max 45 characters)");
                 }
             }
         }

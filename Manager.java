@@ -34,7 +34,6 @@ public class Manager extends Employee{
             System.out.println(title+"\n");
             System.out.print("\u001B[36m");
 
-            System.out.println(title);
             System.out.println("----Manager Menu----");
             System.out.println("1. See Profile Informations");
             System.out.println("2. Display All Employees");
@@ -44,10 +43,11 @@ public class Manager extends Employee{
             System.out.println("6. Fire Employee");
             System.out.println("7. Algorithms");
             System.out.println("8. Logout");
-            Main.clearConsole();
+            
 
 
             int choice = getValidInt();
+            Main.clearConsole();
 
             switch(choice) {
                 case 1:
@@ -153,7 +153,10 @@ public class Manager extends Employee{
             System.out.println("Enter the username for the search. If you wanna go back --> press x");
             String username = validString();
 
-            if(!username.equals("x") || !username.equals("X")) {
+            if(username.equalsIgnoreCase("x")){
+                Main.clearConsole();
+                return;}
+
                 Employee employee = database.getEmployeeUsername(username);
                 ArrayList<Employee> employees = new ArrayList<>();
 
@@ -163,11 +166,12 @@ public class Manager extends Employee{
                 } else {
                     System.out.println("No employee found with " + username);
                 }
-            }
+            
         }catch (Exception e) {
             System.err.println("An error occurred while displaying employees by username.");
             e.printStackTrace();
         }
+        returnToMenu();
         database.disconnectDatabase();
     }
 
@@ -178,18 +182,30 @@ public class Manager extends Employee{
 
         System.out.print("username: ");
         String username = checkPhoneAndUsername("username");
+        if(username.equalsIgnoreCase("x")){
+            Main.clearConsole();
+            return;}
 
         String defaultPassword = "password123";
 
         System.out.print("Name: ");
-        String name =nameSurnameCheck();
+        String name = nameSurnameCheck();
+        if(name.equalsIgnoreCase("x")){
+            Main.clearConsole();
+            return;}
 
         System.out.print("Surname: ");
         String surname = nameSurnameCheck();
+        if(name.equalsIgnoreCase("x")){
+            Main.clearConsole();
+            return;}
 
         String phoneNo = "(" + countryCode() + ") ";
         System.out.printf("Phone Number: %s",phoneNo);
         String temp = checkPhoneAndUsername("phone_no");
+        if(temp.equalsIgnoreCase("x")){
+            Main.clearConsole();
+            return;}
         phoneNo = phoneNo + temp.substring(0,3) + " " + temp.substring(3, 6) +
                 " " + temp.substring(6, 8) + " " + temp.substring(8, 10);
 
@@ -213,7 +229,7 @@ public class Manager extends Employee{
         Date date2 = Date.valueOf(startdate);
 
         //rol ekleme kısmı
-        System.out.print("Role: ");
+        System.out.println("Role: ");
         String role = null;
         while(role == null){
             role = selectRole();
@@ -233,6 +249,7 @@ public class Manager extends Employee{
         database.connectDatabase();
         database.insertEmployee(hire);
         database.disconnectDatabase();
+        
         returnToMenu();
     }
 
@@ -344,12 +361,16 @@ public class Manager extends Employee{
                             this.role=value;
                         break;
                     case 5:
-                        column = "date_of_birth";
+                    column = "date_of_birth";
+
                         value = Date();
-                        break;
+
+                    break;
                     case 6:
                         column = "date_of_start";
-                        value = Date();
+
+                            value = Date();
+
                         break;
                     default:
                         System.out.println("Invalid choice! Please enter a number between 1 and 6.");
@@ -411,7 +432,6 @@ public class Manager extends Employee{
     private String selectRole() {
 
         //display rolemenu
-        System.out.println("Select a role to display employees: ");
         System.out.println("1. Manager");
         System.out.println("2. Engineer");
         System.out.println("3. Intern");
@@ -451,19 +471,21 @@ public class Manager extends Employee{
             try{
 
                 sdf.parse(date);
-                String yearString = date.substring(0, 4);
-                int year = Integer.parseInt(yearString);
-                if(year<1900 || year>2016)
-                    System.out.println("Year must be greater than 1900 or lower than 2016. Please try again.");
-                else
-                    flag = false;
+
 
             }
             catch(ParseException exception){
+                continue;
             }
             catch(NumberFormatException e){
-                System.out.println("Invalid informat. Please try again.");
+                System.out.println("Invalid format. Please try again.");
             }
+            String yearString = date.substring(0, 4);
+            int year = Integer.parseInt(yearString);
+            if(year<1900 || year>2016)
+                System.out.println("Year must be greater than 1900 or lower than 2016. Please try again.");
+            else
+                flag = false;
 
         }
         return date;
@@ -496,7 +518,6 @@ public class Manager extends Employee{
                 System.out.println("Invalid input. Please enter only alphabetical characters (max 45 characters).");
             }
         }
-        System.out.println(input);
         return input;
     }
 
@@ -744,7 +765,7 @@ public class Manager extends Employee{
         return Arrays.equals(sortedArr, javaSortArr);
     }
 
-    private static void algorithms()
+    private void algorithms()
     {
         int size = 0;
 
@@ -810,23 +831,48 @@ public class Manager extends Employee{
             System.out.println("Radix true");
         else
             System.out.println("Radix wrong");
-
+        
         if(sortCheck(shellArray, array))
             System.out.println("Shell true");
+        else
+            System.out.println("Shell wrong");
 
         if(sortCheck(heapArray, array))
             System.out.println("Heap true");
-
+        else
+            System.out.println("Heap wrong");
+            
         if(sortCheck(insertionArray, array))
             System.out.println("Insertion true");
-
+        else
+            System.out.println("Insertion wrong");
+        
         System.out.println();
+            
+        long[] times = new long[4];
+        String[] algorithms = {"Radix Sort", "Shell Sort", "Heap Sort", "Insertion Sort"};
+
+        times[0] = radixTime;
+        times[1] = shellTime;
+        times[2] = heapTime;
+        times[3] = insertionTime;
+
+        long[] sortedTimes = times.clone();
+        Arrays.sort(sortedTimes);
 
         System.out.println("Execution Times:");
-        System.out.println("Radix Sort: " + radixTime + " ns");
-        System.out.println("Shell Sort: " + shellTime + " ns");
-        System.out.println("Heap Sort: " + heapTime + " ns");
-        System.out.println("Insertion Sort: " + insertionTime + " ns");
+        for(long time : sortedTimes)
+        {
+            for(int i = 0; i < times.length; i++)
+            {
+                if(time == times[i])
+                {
+                    System.out.println(algorithms[i] + ": " + time + " ns");
+                    break;
+                }
+            }
 
+        }
     }
+    
 }

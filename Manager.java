@@ -18,75 +18,79 @@ public class Manager extends Employee{
         super();
     }
 
-    public Manager(int employeeID, String username, String password, String role, 
-                        String name, String surname, String phoneNo, 
-                        Date dateOfBirth, Date dateOfStart, String email){
+    public Manager(int employeeID, String username, String password, String role,
+                   String name, String surname, String phoneNo,
+                   Date dateOfBirth, Date dateOfStart, String email){
         // Parent class constructor çağırıldı
         super(employeeID, username, password, role, name, surname, phoneNo, dateOfBirth, dateOfStart, email);
     }
-    
+
     public void managerMenu()
     {
         while (true){
-        String title = this.name + " " + this.surname;
-        System.out.println(title);
-        System.out.println("----Manager Menu----");
-        System.out.println("1. See Profile Informations");
-        System.out.println("2. Display All Employees");
-        System.out.println("3. Display Employees with the Role");
-        System.out.println("4. Display Employee with the Username");
-        System.out.println("5. Update Employee Non-profile Fields");
-        System.out.println("6. Hire Employee");
-        System.out.println("7. Fire Employee");
-        System.out.println("8. Algorithms");
-        System.out.println("9. Logout");
+            String title = this.name + " " + this.surname;
 
-        int choice = getValidInt();
+            System.out.print("\u001B[35m");
+            System.out.println(title+"\n");
+            System.out.print("\u001B[36m");
 
-        switch(choice) {
-            case 1:
-                if(displayProfile()==1)
-                    updateProfile();
-                break;
-            case 2: 
-                displayAllEmployees();
-                break;
-            case 3: 
-                displayEmployeesRole();
-                break;
-            case 4: 
-                displayEmployeeUsername();
-                break;
-            case 5: 
-                updateEmployee();
-                break;
-            case 6: 
-                hireEmployee();
-                break;
-            case 7: 
-                fireEmployee();
-                break;
-            case 8: 
-                algorithms();
-                break;
-            case 9: 
-                System.out.println("Logging Out...");
-                return;
-            default: 
-                System.out.println("Invalid Choice. Please Try Again.");
-                continue;
+            System.out.println("----Manager Menu----");
+            System.out.println("1. See Profile Informations");
+            System.out.println("2. Display All Employees");
+            System.out.println("3. Display Employees with the Role");
+            System.out.println("4. Display Employee with the Username");
+            System.out.println("5. Hire Employee");
+            System.out.println("6. Fire Employee");
+            System.out.println("7. Algorithms");
+            System.out.println("8. Logout");
+            
+
+
+            int choice = getValidInt();
+
+            switch(choice) {
+                case 1:
+                    if(displayProfile()==1)
+                        updateProfile();
+                    break;
+                case 2:
+                    displayAllEmployees();
+                    break;
+                case 3:
+                    displayEmployeesRole();
+                    break;
+                case 4:
+                    displayEmployeeUsername();
+                    break;
+                case 5:
+                    hireEmployee();
+                    break;
+                case 6:
+                    fireEmployee();
+                    break;
+                case 7:
+                    algorithms();
+                    break;
+                case 8:
+                    System.out.println("Logging Out...");
+                    Main.clearConsole();
+                    return;
+                default:
+                    System.out.println("Invalid Choice. Please Try Again.");
+                    continue;
+            }
+
         }
 
-        }
     }
 
     //display için fonksiyon
     private void displayEmployeeDetails(ArrayList<Employee> employees) {
-        System.out.printf("%-10s %-15s %-15s %-15s %-15s %-15s %-15s %-15s %-20s\n", 
+        System.out.printf("%-10s %-15s %-15s %-15s %-15s %-15s %-15s %-15s %-20s\n",
                 "ID", "Username", "Role", "Name", "Surname", "Phone", "Email", "Birth Date", "Start Date");
-    
+
         for (Employee employee : employees) {
-            System.out.printf("%-10d %-15s %-15s %-15s %-15s %-15s %-20s %-20s %-15s\n", 
+            System.out.printf("%-10d %-15s %-15s %-15s %-15s %-15s %-20s %-20s %-15s\n",
                     employee.getEmployeeID(),
                     employee.getUsername(),
                     employee.getRole(),
@@ -104,13 +108,14 @@ public class Manager extends Employee{
 
         database.connectDatabase();
 
-            ArrayList<Employee> employees = database.getEmployees();
-            displayEmployeeDetails(employees);
-            askForEmployeeInfoChange();
+        ArrayList<Employee> employees = database.getEmployees();
+        displayEmployeeDetails(employees);
+        if(askForEmployeeInfoChange()==true)
+            updateEmployee();
 
         database.disconnectDatabase();
         return employees;
-    }  
+    }
 
     //role göre seçim yaparak display
     private void displayEmployeesRole(){
@@ -119,19 +124,21 @@ public class Manager extends Employee{
         String role = null;
         try {
             while(role == null){
-            role = selectRole();
-                if (role == null) 
+                role = selectRole();
+                if (role == null)
                     System.out.println("Invalid choice. Please try again.");
             }
+            Main.clearConsole();
             ArrayList<Employee> employees = database.getEmployeesRole(role);
             displayEmployeeDetails(employees);
-            askForEmployeeInfoChange();
-            }
+            if(askForEmployeeInfoChange()==true)
+                updateEmployee();
+        }
         catch (Exception e) {
             System.err.println("An error occurred while displaying employees by role.");
-            e.printStackTrace();    
+            e.printStackTrace();
         }
-    
+
         database.disconnectDatabase();
     }
 
@@ -142,23 +149,25 @@ public class Manager extends Employee{
 
         try{
 
-            System.out.println("Enter the username for the search");
+            System.out.println("Enter the username for the search. If you wanna go back --> press x");
             String username = validString();
-            Employee employee = database.getEmployeeUsername(username);
-            ArrayList<Employee> employees = new ArrayList<>();
 
-            if(employee != null){
-                employees.add(employee);
-                displayEmployeeDetails(employees); 
-            } else {
-                System.out.println("No employee found with " + username);
+            if(!username.equals("x") || !username.equals("X")) {
+                Employee employee = database.getEmployeeUsername(username);
+                ArrayList<Employee> employees = new ArrayList<>();
+
+                if(employee != null){
+                    employees.add(employee);
+                    displayEmployeeDetails(employees);
+                } else {
+                    System.out.println("No employee found with " + username);
+                }
             }
         }catch (Exception e) {
             System.err.println("An error occurred while displaying employees by username.");
-            e.printStackTrace();    
+            e.printStackTrace();
         }
         database.disconnectDatabase();
-        returnToMenu();
     }
 
     //yeni employee girişi exception lazım
@@ -178,10 +187,10 @@ public class Manager extends Employee{
         String surname = nameSurnameCheck();
 
         String phoneNo = "(" + countryCode() + ") ";
+        System.out.printf("Phone Number: %s",phoneNo);
         String temp = checkPhoneAndUsername("phone_no");
-        System.out.print("Phone Number: ");
-        phoneNo = phoneNo + temp.substring(0,3) + " " + temp.substring(3, 6) + 
-                    " " + temp.substring(6, 8) + " " + temp.substring(8, 10);
+        phoneNo = phoneNo + temp.substring(0,3) + " " + temp.substring(3, 6) +
+                " " + temp.substring(6, 8) + " " + temp.substring(8, 10);
 
         //Valid email: ece.gunaydin@example.com
         //Invalid email: ece.gunaydin@com
@@ -193,7 +202,7 @@ public class Manager extends Employee{
             else
                 System.out.println("Please enter a proper email!: ");
         }
-        
+
         System.out.print("Date of Birth - ");
         String birthdate = Date();
         Date date1 = Date.valueOf(birthdate);
@@ -202,14 +211,14 @@ public class Manager extends Employee{
         String startdate = Date();
         Date date2 = Date.valueOf(startdate);
 
-            //rol ekleme kısmı
-        System.out.print("Role:");
+        //rol ekleme kısmı
+        System.out.print("Role: ");
         String role = null;
         while(role == null){
             role = selectRole();
-                if (role == null) 
-                    System.out.println("Invalid choice. Please try again.");
-            }
+            if (role == null)
+                System.out.println("Invalid choice. Please try again.");
+        }
 
         Employee hire;
 
@@ -230,44 +239,44 @@ public class Manager extends Employee{
     private void fireEmployee(){
 
         database.connectDatabase();
-        
-            String username="";
-            boolean flag=true;
-            while(flag){
-                System.out.printf("Enter the username for the delete operation: ");
-                username = validString();
-                //menajerin kendisini silememesi için
-                boolean flag2=true;
-                if (this.username.equals(username)) {
-                    System.out.println("You cannot delete your own account.");
-                    while(flag2){
-                        System.out.println("If you want to delete another employee press 1, or back to main menu press 2");
-                        int choice = getValidInt();
-                        switch(choice){
-                            case 1:
+
+        String username="";
+        boolean flag=true;
+        while(flag){
+            System.out.printf("Enter the username for the delete operation: ");
+            username = validString();
+            //menajerin kendisini silememesi için
+            boolean flag2=true;
+            if (this.username.equals(username)) {
+                System.out.println("You cannot delete your own account.");
+                while(flag2){
+                    System.out.println("If you want to delete another employee press 1, or back to main menu press 2");
+                    int choice = getValidInt();
+                    switch(choice){
+                        case 1:
                             flag2=false;
-                                continue;
-                            case 2:
+                            continue;
+                        case 2:
                             flag=false;
-                                break;
-                            default:
-                                System.out.println("Invalid choice!");
-                        }
+                            break;
+                        default:
+                            System.out.println("Invalid choice!");
                     }
                 }
-                else
-                    break;
-
             }
+            else
+                break;
 
-            Employee employeetodelete = database.getEmployeeUsername(username);
+        }
 
-            if(employeetodelete != null){
-                database.deleteEmployee(employeetodelete);
-                System.out.println("Employee with Username: " + username +" Deleted.");
-            }else {
-                System.out.println("employee not found: " + username);
-            }
+        Employee employeetodelete = database.getEmployeeUsername(username);
+
+        if(employeetodelete != null){
+            database.deleteEmployee(employeetodelete);
+            System.out.println("Employee with Username: " + username +" Deleted.");
+        }else {
+            System.out.println("employee not found: " + username);
+        }
 
         database.disconnectDatabase();
         returnToMenu();
@@ -277,7 +286,11 @@ public class Manager extends Employee{
     private void updateEmployee(){
 
         database.connectDatabase();
-        
+
+        boolean flag = true;
+        while(flag) {
+
+
         try{
 
             System.out.println("Enter the username for the update operation: ");
@@ -347,57 +360,65 @@ public class Manager extends Employee{
 
         }catch(Exception e) {
             System.err.println("An error occurred while updating employee");
-            e.printStackTrace();    
+            e.printStackTrace();
+        }
+
+            if(askForEmployeeInfoChange()==false)
+                flag = false;
         }
         database.disconnectDatabase();
         returnToMenu();
     }
 
-    private void askForEmployeeInfoChange() {
-    
-    System.out.println("Do you want to change an employee information?");
-    System.out.println("1. YES");
-    System.out.println("2. NO (Return to main menu)");
+    private boolean askForEmployeeInfoChange() {
 
-    while (true) {
-        int userInput = getValidInt();
+        System.out.println("\nDo you want to change an employee information?");
+        System.out.println("1. YES");
+        System.out.println("2. NO (Return to main menu)");
+
+        while (true) {
+            int userInput = getValidInt();
 
             if (userInput == 1) {
-                updateEmployee();
-                return;
+                Main.clearConsole();
+                return true;
             } else if (userInput == 2) {
-                return;
+                Main.clearConsole();
+                return false;
             } else {
                 System.out.println("Please make a valid choice (1 for YES or 2 for NO).");
             }
-        } 
+        }
     }
 
     private void returnToMenu(){
         System.out.println("Press 'M' to return main menu");
-    
+
         while (true) {
             String input = scan.nextLine();
 
-            if (input.equalsIgnoreCase("M")){
+            if (input.equalsIgnoreCase("M")) {
+                Main.clearConsole();
                 break;
-            }
-            else
+            } else {
                 System.out.println("Invalid input. Please press 'M' to return to the menu.");
+                Main.clearConsole();
+            }
         }
     }
 
     private String selectRole() {
-    
+
         //display rolemenu
         System.out.println("Select a role to display employees: ");
         System.out.println("1. Manager");
         System.out.println("2. Engineer");
         System.out.println("3. Intern");
         System.out.println("4. Technician");
-        System.out.print("Choose a role from menu: ");
-    
+        System.out.print("\nChoose a role from menu: ");
+
         int choice = getValidInt();
+        Main.clearConsole();
 
         switch (choice) {
             case 1:
@@ -447,29 +468,29 @@ public class Manager extends Employee{
         return date;
     }
 
-    public static String nameSurnameCheck() {
+    public String nameSurnameCheck() {
         String input;
-    
-        while (true) 
+
+        while (true)
         {
-            input = scan.nextLine().trim();
-            
+            input = validString();
+
             // Check for length and whether all characters are alphabetical
-            if (input.length() <= 45 && isAlpha(input)) 
+            if (isAlpha(input))
             {
                 // Convert all characters to lowercase
                 char[] chars = input.toCharArray();
-                for (int i = 0; i < chars.length; i++) 
+                for (int i = 0; i < chars.length; i++)
                 {
                     chars[i] = Character.toLowerCase(chars[i]);
                 }
                 // Capitalize the first character
                 chars[0] = Character.toUpperCase(chars[0]);
                 input = new String(chars);
-    
+
                 break;
-            } 
-            else 
+            }
+            else
             {
                 System.out.println("Invalid input. Please enter only alphabetical characters (max 45 characters).");
             }
@@ -477,13 +498,13 @@ public class Manager extends Employee{
         System.out.println(input);
         return input;
     }
-    
+
     // Method to check if a string contains only alphabetic characters
-    public static boolean isAlpha(String str) 
+    public static boolean isAlpha(String str)
     {
-        for (char c : str.toCharArray()) 
+        for (char c : str.toCharArray())
         {
-            if (!Character.isLetter(c)) // Turkish character check
+            if (!Character.isLetter(c) && (c != ' ') ) // Turkish character check
             {
                 return false;
             }
@@ -492,118 +513,118 @@ public class Manager extends Employee{
     }
 
 
-   ///////////////////////Algorithms eklendi///////////////////////
+    ///////////////////////Algorithms eklendi///////////////////////
 
     private static void radixSort(int[] arr) {
-        if (arr == null || arr.length == 0) 
+        if (arr == null || arr.length == 0)
         {
             return; // If size is 0 don't do anything
         }
-    
+
         // Put negative and pozitive values into different arrays
         int negativeCount = 0;
-        for (int value : arr) 
+        for (int value : arr)
         {
-            if (value < 0) 
+            if (value < 0)
             {
                 negativeCount++;
             }
         }
-    
+
         int[] negatives = new int[negativeCount]; // Negative values as an array
         int[] positives = new int[arr.length - negativeCount]; // Positive values as an array
-    
+
         int negIndex = 0, posIndex = 0;
-        for (int value : arr) 
+        for (int value : arr)
         {
-            if (value < 0) 
+            if (value < 0)
             {
                 negatives[negIndex++] = -value; // Turn negative numbers to positive
-            } 
-            
-            else 
+            }
+
+            else
             {
                 positives[posIndex++] = value; // If positive put it into positive array
             }
         }
-    
+
         // Sort negative and positive arrays
-        if (negatives.length > 0) 
+        if (negatives.length > 0)
         {
             radixSortPositive(negatives);
         }
 
-        if (positives.length > 0) 
+        if (positives.length > 0)
         {
             radixSortPositive(positives);
         }
-    
+
         // Reverse the negative array convert the values to negative and place them in the array
-        for (int i = 0; i < negatives.length; i++) 
+        for (int i = 0; i < negatives.length; i++)
         {
             arr[i] = -negatives[negatives.length - 1 - i];
         }
-    
+
         // Add  the positive array
-        for (int i = 0; i < positives.length; i++) 
+        for (int i = 0; i < positives.length; i++)
         {
             arr[negatives.length + i] = positives[i];
         }
     }
-    
-    private static void radixSortPositive(int[] arr) 
+
+    private static void radixSortPositive(int[] arr)
     {
         int max = maxValue(arr);
-    
+
         int exp = 1;
-        while (max / exp > 0) 
+        while (max / exp > 0)
         {
             sortCount(arr, exp);
             exp *= 10;
         }
     }
-    
-    private static int maxValue(int[] arr) 
+
+    private static int maxValue(int[] arr)
     {
         int max = arr[0];
-        for (int value : arr) 
+        for (int value : arr)
         {
-            if (value > max) 
+            if (value > max)
             {
                 max = value;
             }
         }
         return max;
     }
-    
-    private static void sortCount(int[] arr, int exp) 
+
+    private static void sortCount(int[] arr, int exp)
     {
         int n = arr.length;
         int[] sorted = new int[n];
         int[] count = new int[10]; // Counts numbers from 0 to 9
-    
+
         // Count the digits
         for (int i = 0; i < n; i++) {
             int digit = (arr[i] / exp) % 10;
             count[digit]++;
         }
-    
+
         // Kümülatif toplama
         for (int i = 1; i < 10; i++) {
             count[i] += count[i - 1];
         }
-    
+
         // Sort numbers
         for (int i = n - 1; i >= 0; i--) {
             int digit = (arr[i] / exp) % 10;
             sorted[count[digit] - 1] = arr[i];
             count[digit]--;
         }
-    
+
         // Copy sorted array to original array
         System.arraycopy(sorted, 0, arr, 0, n);
     }
-        
+
     private static void shellSort(int[] arr)
     {
         int n = arr.length;
@@ -728,38 +749,38 @@ public class Manager extends Employee{
 
         boolean flg = false;
         while(!flg)
-        {   
+        {
             System.out.printf("Enter size between 1,000 to 10,000: ");
 
             if(scan.hasNextInt())
             {
                 size = scan.nextInt();
-                
-                if (size >= 1000 && size <= 10000) 
+
+                if (size >= 1000 && size <= 10000)
                 {
                     if(size == 0)
-				    {
-					    System.out.println("Size is zero.");
-				    }
+                    {
+                        System.out.println("Size is zero.");
+                    }
 
-                    flg = true; 
+                    flg = true;
                 }
 
-                else 
+                else
                 {
                     System.out.println("Size should be in the [1,000 - 10,000] range.");
-			    }
+                }
             }
 
             else
-		    {
-			    System.out.println("Invalid input. Please enter an integer.");
-			    scan.next(); //Skip invalid input
-		    }       
+            {
+                System.out.println("Invalid input. Please enter an integer.");
+                scan.next(); //Skip invalid input
+            }
         }
-    
+
         int[] array = randomArray(size);
-    
+
         int[] radixArray = array.clone();
         int[] shellArray = array.clone();
         int[] heapArray = array.clone();
@@ -787,19 +808,19 @@ public class Manager extends Employee{
         if(sortCheck(radixArray, array))
             System.out.println("Radix true");
         else
-        System.out.println("Radix wrong");
-        
+            System.out.println("Radix wrong");
+
         if(sortCheck(shellArray, array))
             System.out.println("Shell true");
 
         if(sortCheck(heapArray, array))
             System.out.println("Heap true");
-            
+
         if(sortCheck(insertionArray, array))
             System.out.println("Insertion true");
-        
+
         System.out.println();
-            
+
         System.out.println("Execution Times:");
         System.out.println("Radix Sort: " + radixTime + " ns");
         System.out.println("Shell Sort: " + shellTime + " ns");
@@ -808,6 +829,3 @@ public class Manager extends Employee{
 
     }
 }
-
-
-

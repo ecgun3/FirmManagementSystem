@@ -67,7 +67,7 @@ public class Main {
 
         for(int i=0;i<40;i++){//sağa kayacağı loop sayısı
             try {
-                Thread.sleep(80);
+                Thread.sleep(8);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public class Main {
             clearConsole();
             System.out.println(flower1);
             try {
-                Thread.sleep(400);
+                Thread.sleep(4);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -91,7 +91,7 @@ public class Main {
             clearConsole();
             System.out.println(flower2);
             try {
-                Thread.sleep(400);
+                Thread.sleep(4);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

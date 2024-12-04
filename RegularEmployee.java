@@ -11,11 +11,11 @@ public class RegularEmployee extends Employee {
         super();
     }
 
-    public RegularEmployee(int employeeID, String username, String password, String role, 
-                           String name, String surname, String phoneNo, 
+    public RegularEmployee(int employeeID, String username, String password, String role,
+                           String name, String surname, String phoneNo,
                            Date dateOfBirth, Date dateOfStart, String email) {
-            //Calling superclass's constructor
-            super(employeeID, username, password, role, name, surname, phoneNo, dateOfBirth, dateOfStart, email);
+        //Calling superclass's constructor
+        super(employeeID, username, password, role, name, surname, phoneNo, dateOfBirth, dateOfStart, email);
     }
 
     //Menu
@@ -33,7 +33,7 @@ public class RegularEmployee extends Employee {
             choice = getValidInt();
 
             switch (choice) {
-                case 1: 
+                case 1:
                     if(displayProfile()==1)
                         updateProfile();
                     returnToMenu();
@@ -42,7 +42,7 @@ public class RegularEmployee extends Employee {
                     updateProfile();
                     returnToMenu();
                     break;
-                case 3 : 
+                case 3 :
                     System.out.println("Logging out...");
                     //Exit the menu
                     break;
@@ -55,7 +55,7 @@ public class RegularEmployee extends Employee {
 
     public void returnToMenu(){
         System.out.println("Press 'M' to return main menu");
-    
+
         while (true) {
             String input = scan.nextLine();
 
